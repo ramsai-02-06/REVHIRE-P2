@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<!-- ============================================================
+     RevHire | landing.html
+     UI REDESIGN — Indeed-Style Modern Landing Page
+     ============================================================
+     ✅ ALL Thymeleaf attributes preserved EXACTLY:
+       • th:href="@{/}"
+       • th:href="@{/jobs}"
+       • th:href="@{/contact}"
+       • th:href="@{/login}"
+       • th:href="@{/register}"
+     ============================================================ -->
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RevHire | Smart Hiring Platform</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+
+    /* ══ TOKENS ══ */
+    :root {
+      --rh-blue:        #2557a7;
+      --rh-blue-dark:   #1a4480;
+      --rh-blue-light:  #eff6ff;
+      --rh-navy:        #0d1b2a;
+      --rh-gray-bg:     #f3f4f6;
+      --rh-border:      #e5e7eb;
+      --rh-text:        #111827;
+      --rh-muted:       #6b7280;
+      --rh-font:        'Inter', 'Segoe UI', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: var(--rh-font);
+      font-size: 15px;
+      color: var(--rh-text);
+      margin: 0;
+      background: #fff;
+      scroll-behavior: smooth;
+    }
+
+    /* ══ NAVBAR ══ */
+    .rh-nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #fff;
+      border-bottom: 1px solid var(--rh-border);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      height: 64px;
+      display: flex;
+      align-items: center;
+    }
+
+    .rh-nav-inner {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .rh-nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .rh-nav-logo {
+      width: 36px;
+      height: 36px;
+      background: var(--rh-blue);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(37,87,167,0.35);
+      flex-shrink: 0;
+    }
+
+    .rh-nav-brand-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--rh-text);
+      letter-spacing: -0.2px;
+    }
+
+    .rh-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .rh-nav-links a {
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--rh-muted);
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .rh-nav-links a:hover {
+      background: var(--rh-gray-bg);
+      color: var(--rh-text);
+    }
+
+    .rh-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-rh-ghost {
+      padding: 8px 20px;
+      border-radius: 8px;
+      border: 1px solid var(--rh-border);
+      background: #fff;
+      color: var(--rh-text);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .btn-rh-ghost:hover {
+      border-color: var(--rh-blue);
+      color: var(--rh-blue);
+      text-decoration: none;
+    }
+
+    .btn-rh-primary {
+      padding: 8px 20px;
+      border-radius: 8px;
+      background: var(--rh-blue);
+      color: #fff;
+      border: 1px solid var(--rh-blue);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .btn-rh-primary:hover {
+      background: var(--rh-blue-dark);
+      border-color: var(--rh-blue-dark);
+      color: #fff;
+      text-decoration: none;
+    }
+
+    /* ══ HERO ══ */
+    .rh-hero {
+      background: linear-gradient(135deg, #0d1b2a 0%, #1a3a6b 45%, #2557a7 100%);
+      padding: 100px 32px 90px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* decorative blobs */
+    .rh-hero::before {
+      content: '';
+      position: absolute;
+      top: -120px; left: -120px;
+      width: 480px; height: 480px;
+      border-radius: 50%;
+      background: rgba(37,87,167,0.18);
+      pointer-events: none;
+    }
+
+    .rh-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -100px; right: -80px;
+      width: 360px; height: 360px;
+      border-radius: 50%;
+      background: rgba(59,130,246,0.14);
+      pointer-events: none;
+    }
+
+    .rh-hero-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .rh-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #93c5fd;
+      margin-bottom: 28px;
+      letter-spacing: 0.3px;
+    }
+
+    .rh-hero h1 {
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.12;
+      letter-spacing: -1px;
+      margin: 0 0 20px;
+    }
+
+    .rh-hero h1 span {
+      color: #60a5fa;
+    }
+
+    .rh-hero-sub {
+      font-size: 17px;
+      color: rgba(255,255,255,0.68);
+      line-height: 1.6;
+      margin: 0 0 40px;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .rh-hero-cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn-rh-hero-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border-radius: 10px;
+      background: #fff;
+      color: var(--rh-blue);
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      border: 2px solid #fff;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    }
+
+    .btn-rh-hero-primary:hover {
+      background: var(--rh-blue-light);
+      color: var(--rh-blue-dark);
+      text-decoration: none;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+    }
+
+    .btn-rh-hero-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border-radius: 10px;
+      background: transparent;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      border: 2px solid rgba(255,255,255,0.35);
+      transition: all 0.2s;
+    }
+
+    .btn-rh-hero-ghost:hover {
+      background: rgba(255,255,255,0.10);
+      border-color: rgba(255,255,255,0.6);
+      color: #fff;
+      text-decoration: none;
+    }
+
+    /* Hero stats strip */
+    .rh-hero-stats {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      margin-top: 56px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .rh-hero-stat-item {
+      text-align: center;
+    }
+
+    .rh-hero-stat-num {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+
+    .rh-hero-stat-label {
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.55);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .rh-hero-stat-divider {
+      width: 1px;
+      height: 40px;
+      background: rgba(255,255,255,0.12);
+    }
+
+    /* ══ SECTION SHELL ══ */
+    .rh-section {
+      padding: 88px 32px;
+    }
+
+    .rh-section-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .rh-section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--rh-blue);
+      margin-bottom: 12px;
+    }
+
+    .rh-section-title {
+      font-size: clamp(26px, 3vw, 38px);
+      font-weight: 800;
+      color: var(--rh-text);
+      letter-spacing: -0.6px;
+      line-height: 1.2;
+      margin: 0 0 14px;
+    }
+
+    .rh-section-sub {
+      font-size: 16px;
+      color: var(--rh-muted);
+      line-height: 1.65;
+      margin: 0;
+      max-width: 540px;
+    }
+
+    /* ══ HOW IT WORKS ══ */
+    .rh-steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      margin-top: 52px;
+    }
+
+    .rh-step-card {
+      background: #fff;
+      border: 1px solid var(--rh-border);
+      border-radius: 18px;
+      padding: 32px 28px;
+      position: relative;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    .rh-step-card:hover {
+      box-shadow: 0 10px 32px rgba(37,87,167,0.10);
+      border-color: #bfdbfe;
+      transform: translateY(-4px);
+    }
+
+    .rh-step-num {
+      position: absolute;
+      top: -16px;
+      left: 28px;
+      width: 32px;
+      height: 32px;
+      background: var(--rh-blue);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 3px 10px rgba(37,87,167,0.35);
+    }
+
+    .rh-step-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+
+    .rh-step-card h5 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--rh-text);
+      margin: 0 0 10px;
+    }
+
+    .rh-step-card p {
+      font-size: 14px;
+      color: var(--rh-muted);
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    /* ══ FOR WHO SECTION ══ */
+    .rh-for-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      margin-top: 52px;
+    }
+
+    .rh-for-card {
+      border-radius: 20px;
+      padding: 44px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .rh-for-card-seeker {
+      background: linear-gradient(135deg, #1a4480 0%, #2557a7 100%);
+    }
+
+    .rh-for-card-employer {
+      background: linear-gradient(135deg, #0d1b2a 0%, #1a3a6b 100%);
+    }
+
+    .rh-for-card::before {
+      content: '';
+      position: absolute;
+      right: -60px; top: -60px;
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      pointer-events: none;
+    }
+
+    .rh-for-card-inner { position: relative; z-index: 1; }
+
+    .rh-for-icon {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+      color: #fff;
+      margin-bottom: 22px;
+    }
+
+    .rh-for-card h3 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+      margin: 0 0 12px;
+    }
+
+    .rh-for-card p {
+      font-size: 14.5px;
+      color: rgba(255,255,255,0.68);
+      line-height: 1.65;
+      margin: 0 0 28px;
+    }
+
+    .rh-for-features {
+      list-style: none;
+      margin: 0 0 32px;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .rh-for-features li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.80);
+    }
+
+    .rh-for-features li i {
+      color: #60a5fa;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .btn-rh-for {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 11px 24px;
+      border-radius: 9px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.28);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.18s;
+    }
+
+    .btn-rh-for:hover {
+      background: rgba(255,255,255,0.22);
+      color: #fff;
+      text-decoration: none;
+    }
+
+    /* ══ FEATURES STRIP ══ */
+    .rh-features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+      margin-top: 52px;
+    }
+
+    .rh-feature-card {
+      background: #fff;
+      border: 1px solid var(--rh-border);
+      border-radius: 16px;
+      padding: 26px 22px;
+      transition: all 0.2s;
+    }
+
+    .rh-feature-card:hover {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.07);
+      border-color: #bfdbfe;
+      transform: translateY(-3px);
+    }
+
+    .rh-feature-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+
+    .rh-feature-card h6 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--rh-text);
+      margin: 0 0 8px;
+    }
+
+    .rh-feature-card p {
+      font-size: 13.5px;
+      color: var(--rh-muted);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ══ CTA BAND ══ */
+    .rh-cta {
+      background: linear-gradient(120deg, #1a4480 0%, #2557a7 55%, #3b82f6 100%);
+      padding: 80px 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .rh-cta::before {
+      content: '';
+      position: absolute;
+      left: -100px; top: -100px;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      pointer-events: none;
+    }
+
+    .rh-cta-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
+
+    .rh-cta h2 {
+      font-size: clamp(26px, 3.5vw, 40px);
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.5px;
+      margin: 0 0 14px;
+    }
+
+    .rh-cta p {
+      font-size: 16px;
+      color: rgba(255,255,255,0.70);
+      margin: 0 0 36px;
+    }
+
+    .rh-cta-actions {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    /* ══ FOOTER ══ */
+    .rh-footer {
+      background: var(--rh-navy);
+      padding: 56px 32px 28px;
+      color: #94a3b8;
+    }
+
+    .rh-footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .rh-footer-top {
+      display: grid;
+      grid-template-columns: 1.8fr 1fr 1fr 1fr;
+      gap: 40px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .rh-footer-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+
+    .rh-footer-logo {
+      width: 34px; height: 34px;
+      background: var(--rh-blue);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 800; color: #fff;
+    }
+
+    .rh-footer-brand-name { font-size: 16px; font-weight: 700; color: #fff; }
+
+    .rh-footer-desc {
+      font-size: 13.5px;
+      line-height: 1.65;
+      color: #64748b;
+      margin: 0;
+    }
+
+    .rh-footer-col h6 {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      margin: 0 0 18px;
+    }
+
+    .rh-footer-col ul { list-style: none; margin: 0; padding: 0; }
+
+    .rh-footer-col ul li { margin-bottom: 11px; }
+
+    .rh-footer-col ul li a {
+      font-size: 13.5px;
+      color: #64748b;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .rh-footer-col ul li a:hover { color: #fff; }
+
+    .rh-footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 28px;
+      font-size: 13px;
+      color: #475569;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width: 991.98px) {
+      .rh-steps-grid { grid-template-columns: 1fr; }
+      .rh-for-grid   { grid-template-columns: 1fr; }
+      .rh-features-grid { grid-template-columns: repeat(2, 1fr); }
+      .rh-footer-top { grid-template-columns: 1fr 1fr; }
+      .rh-hero-stats { gap: 24px; }
+      .rh-hero-stat-divider { display: none; }
+      .rh-nav-links { display: none; }
+    }
+
+    @media (max-width: 576px) {
+      .rh-section { padding: 56px 20px; }
+      .rh-hero { padding: 72px 20px 64px; }
+      .rh-cta { padding: 56px 20px; }
+      .rh-features-grid { grid-template-columns: 1fr; }
+      .rh-footer-top { grid-template-columns: 1fr; }
+      .rh-for-card { padding: 32px 24px; }
+      .rh-hero-stats { gap: 16px; }
+    }
+
+  </style>
+</head>
+
+<body>
+
+<!-- ══════════════════════
+     NAVBAR
+     BACKEND SAFE: all th:href preserved
+     ══════════════════════ -->
+<nav class="rh-nav">
+  <div class="rh-nav-inner">
+
+    <!-- Brand — BACKEND SAFE: th:href="@{/}" preserved -->
+    <a class="rh-nav-brand" th:href="@{/}">
+      <div class="rh-nav-logo">R</div>
+      <span class="rh-nav-brand-name">RevHire</span>
+    </a>
+
+    <!-- Nav links -->
+    <ul class="rh-nav-links">
+      <li><a th:href="@{/}">Home</a></li>
+      <li><a th:href="@{/jobs}">Jobs</a></li>
+      <li><a th:href="@{/contact}">Contact</a></li>
+    </ul>
+
+    <!-- Auth actions -->
+    <div class="rh-nav-actions">
+      <!-- BACKEND SAFE: th:href="@{/login}" preserved -->
+      <a class="btn-rh-ghost" th:href="@{/login}">Login</a>
+      <!-- BACKEND SAFE: th:href="@{/register}" preserved -->
+      <a class="btn-rh-primary" th:href="@{/register}">Get Started</a>
+    </div>
+
+  </div>
+</nav>
+
+
+<!-- ══════════════════════
+     HERO
+     ══════════════════════ -->
+<section class="rh-hero">
+  <div class="rh-hero-inner">
+
+    <div class="rh-hero-badge">
+      <i class="bi bi-lightning-charge-fill"></i>
+      Smart Hiring Platform for India
+    </div>
+
+    <h1>
+      Find Your Dream Job<br>
+      <span>Or Your Next Great Hire</span>
+    </h1>
+
+    <p class="rh-hero-sub">
+      RevHire connects skilled professionals with top employers.
+      Post jobs, build resumes, track applications — all in one place.
+    </p>
+
+    <div class="rh-hero-cta">
+      <!-- BACKEND SAFE: th:href="@{/register}" preserved -->
+      <a class="btn-rh-hero-primary" th:href="@{/register}">
+        <i class="bi bi-person-plus-fill"></i> Create Free Account
+      </a>
+      <!-- BACKEND SAFE: th:href="@{/login}" preserved -->
+      <a class="btn-rh-hero-ghost" th:href="@{/login}">
+        <i class="bi bi-box-arrow-in-right"></i> Sign In
+      </a>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="rh-hero-stats">
+      <div class="rh-hero-stat-item">
+        <div class="rh-hero-stat-num">10K+</div>
+        <div class="rh-hero-stat-label">Active Jobs</div>
+      </div>
+      <div class="rh-hero-stat-divider"></div>
+      <div class="rh-hero-stat-item">
+        <div class="rh-hero-stat-num">50K+</div>
+        <div class="rh-hero-stat-label">Job Seekers</div>
+      </div>
+      <div class="rh-hero-stat-divider"></div>
+      <div class="rh-hero-stat-item">
+        <div class="rh-hero-stat-num">5K+</div>
+        <div class="rh-hero-stat-label">Employers</div>
+      </div>
+      <div class="rh-hero-stat-divider"></div>
+      <div class="rh-hero-stat-item">
+        <div class="rh-hero-stat-num">98%</div>
+        <div class="rh-hero-stat-label">Satisfaction Rate</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════
+     HOW IT WORKS
+     ══════════════════════ -->
+<section class="rh-section" style="background:#f9fafb;">
+  <div class="rh-section-inner">
+
+    <div class="text-center">
+      <div class="rh-section-label">Simple Process</div>
+      <h2 class="rh-section-title">How RevHire Works</h2>
+      <p class="rh-section-sub" style="margin:0 auto;">
+        Three simple steps to launch your career or find your perfect candidate.
+      </p>
+    </div>
+
+    <div class="rh-steps-grid">
+
+      <div class="rh-step-card">
+        <div class="rh-step-num">1</div>
+        <div class="rh-step-icon" style="background:#eff6ff;color:#2557a7;">
+          <i class="bi bi-person-plus-fill"></i>
+        </div>
+        <h5>Create Your Account</h5>
+        <p>Sign up as a Job Seeker or Employer in under 2 minutes. Build your profile and get discovered by the right people.</p>
+      </div>
+
+      <div class="rh-step-card">
+        <div class="rh-step-num">2</div>
+        <div class="rh-step-icon" style="background:#f0fdf4;color:#059669;">
+          <i class="bi bi-file-earmark-person-fill"></i>
+        </div>
+        <h5>Build Your Resume</h5>
+        <p>Upload a PDF or use our structured resume builder — add skills, projects, certifications, and experience sections.</p>
+      </div>
+
+      <div class="rh-step-card">
+        <div class="rh-step-num">3</div>
+        <div class="rh-step-icon" style="background:#fff7ed;color:#ea580c;">
+          <i class="bi bi-briefcase-fill"></i>
+        </div>
+        <h5>Apply &amp; Get Hired</h5>
+        <p>Apply to matching jobs with one click, track application status in real-time, and receive instant notifications.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════
+     FOR SEEKER / EMPLOYER
+     ══════════════════════ -->
+<section class="rh-section" style="background:#fff;">
+  <div class="rh-section-inner">
+
+    <div class="rh-section-label">Who It's For</div>
+    <h2 class="rh-section-title">One Platform, Two Powerful Sides</h2>
+    <p class="rh-section-sub">Whether you're looking for work or looking to hire, RevHire has you covered.</p>
+
+    <div class="rh-for-grid">
+
+      <!-- Job Seekers -->
+      <div class="rh-for-card rh-for-card-seeker">
+        <div class="rh-for-card-inner">
+          <div class="rh-for-icon"><i class="bi bi-person-workspace"></i></div>
+          <h3>For Job Seekers</h3>
+          <p>Discover thousands of opportunities matched to your skills, location, and experience. Apply instantly.</p>
+          <ul class="rh-for-features">
+            <li><i class="bi bi-check-circle-fill"></i> Smart job search with filters</li>
+            <li><i class="bi bi-check-circle-fill"></i> Structured resume builder</li>
+            <li><i class="bi bi-check-circle-fill"></i> Real-time application tracking</li>
+            <li><i class="bi bi-check-circle-fill"></i> Save jobs for later</li>
+            <li><i class="bi bi-check-circle-fill"></i> Instant notifications on status</li>
+          </ul>
+          <!-- BACKEND SAFE: th:href="@{/register}" preserved -->
+          <a class="btn-rh-for" th:href="@{/register}">
+            Find Jobs <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Employers -->
+      <div class="rh-for-card rh-for-card-employer">
+        <div class="rh-for-card-inner">
+          <div class="rh-for-icon"><i class="bi bi-building"></i></div>
+          <h3>For Employers</h3>
+          <p>Post jobs, receive applications, shortlist candidates and manage your entire hiring pipeline in one dashboard.</p>
+          <ul class="rh-for-features">
+            <li><i class="bi bi-check-circle-fill"></i> Post unlimited jobs</li>
+            <li><i class="bi bi-check-circle-fill"></i> Review structured resumes</li>
+            <li><i class="bi bi-check-circle-fill"></i> Shortlist &amp; reject applicants</li>
+            <li><i class="bi bi-check-circle-fill"></i> Full application dashboard</li>
+            <li><i class="bi bi-check-circle-fill"></i> Company profile management</li>
+          </ul>
+          <!-- BACKEND SAFE: th:href="@{/register}" preserved -->
+          <a class="btn-rh-for" th:href="@{/register}">
+            Start Hiring <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════
+     PLATFORM FEATURES
+     ══════════════════════ -->
+<section class="rh-section" style="background:#f9fafb;">
+  <div class="rh-section-inner">
+
+    <div class="text-center">
+      <div class="rh-section-label">Platform Features</div>
+      <h2 class="rh-section-title">Everything You Need to Succeed</h2>
+      <p class="rh-section-sub" style="margin:0 auto;">Powerful tools built for the modern hiring experience.</p>
+    </div>
+
+    <div class="rh-features-grid">
+
+      <div class="rh-feature-card">
+        <div class="rh-feature-icon" style="background:#eff6ff;color:#2557a7;">
+          <i class="bi bi-search"></i>
+        </div>
+        <h6>Smart Job Search</h6>
+        <p>Filter by role, salary, location, job type, and experience level. Find your perfect match fast.</p>
+      </div>
+
+      <div class="rh-feature-card">
+        <div class="rh-feature-icon" style="background:#f0fdf4;color:#059669;">
+          <i class="bi bi-file-earmark-text-fill"></i>
+        </div>
+        <h6>Resume Builder</h6>
+        <p>Create a professional resume with structured sections — skills, education, projects, certifications.</p>
+      </div>
+
+      <div class="rh-feature-card">
+        <div class="rh-feature-icon" style="background:#fff7ed;color:#ea580c;">
+          <i class="bi bi-activity"></i>
+        </div>
+        <h6>Application Tracking</h6>
+        <p>See exactly where your application stands — Applied, Shortlisted, or Rejected — in real time.</p>
+      </div>
+
+      <div class="rh-feature-card">
+        <div class="rh-feature-icon" style="background:#faf5ff;color:#7c3aed;">
+          <i class="bi bi-bell-fill"></i>
+        </div>
+        <h6>Instant Notifications</h6>
+        <p>Get notified the moment an employer updates your application status. Stay ahead of every move.</p>
+      </div>
+
+      <div class="rh-feature-card">
+        <div class="rh-feature-icon" style="background:#fef2f2;color:#dc2626;">
+          <i class="bi bi-bookmark-heart-fill"></i>
+        </div>
+        <h6>Save Jobs</h6>
+        <p>Bookmark interesting roles and come back to apply when you're ready. Never lose a great opportunity.</p>
+      </div>
+
+      <div class="rh-feature-card">
+        <div class="rh-feature-icon" style="background:#ecfdf5;color:#059669;">
+          <i class="bi bi-shield-check-fill"></i>
+        </div>
+        <h6>Secure &amp; Private</h6>
+        <p>Your data is protected. Control what employers can see — always stay in charge of your profile.</p>
+      </div>
+
+      <div class="rh-feature-card">
+        <div class="rh-feature-icon" style="background:#fff7ed;color:#ea580c;">
+          <i class="bi bi-people-fill"></i>
+        </div>
+        <h6>Employer Dashboard</h6>
+        <p>Manage job postings, review applications, and track hiring metrics from a single powerful dashboard.</p>
+      </div>
+
+      <div class="rh-feature-card">
+        <div class="rh-feature-icon" style="background:#eff6ff;color:#2557a7;">
+          <i class="bi bi-phone-fill"></i>
+        </div>
+        <h6>Mobile Friendly</h6>
+        <p>Apply to jobs, check notifications and manage your profile from any device, anywhere, anytime.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════
+     CTA BAND
+     ══════════════════════ -->
+<section class="rh-cta">
+  <div class="rh-cta-inner">
+    <h2>Ready to Transform Your Career?</h2>
+    <p>Join thousands of professionals and companies already using RevHire. It's free to get started.</p>
+    <div class="rh-cta-actions">
+      <!-- BACKEND SAFE: th:href="@{/register}" preserved -->
+      <a class="btn-rh-hero-primary" th:href="@{/register}">
+        <i class="bi bi-rocket-takeoff-fill"></i> Join RevHire Free
+      </a>
+      <!-- BACKEND SAFE: th:href="@{/login}" preserved -->
+      <a class="btn-rh-hero-ghost" th:href="@{/login}">
+        Already have an account? Login
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════
+     FOOTER
+     ══════════════════════ -->
+<footer class="rh-footer">
+  <div class="rh-footer-inner">
+
+    <div class="rh-footer-top">
+
+      <!-- Brand col -->
+      <div>
+        <div class="rh-footer-brand">
+          <div class="rh-footer-logo">R</div>
+          <span class="rh-footer-brand-name">RevHire</span>
+        </div>
+        <p class="rh-footer-desc">
+          A modern hiring platform designed to connect skilled professionals
+          with top employers across India. Smart, fast, and reliable.
+        </p>
+      </div>
+
+      <!-- Platform -->
+      <div class="rh-footer-col">
+        <h6>Platform</h6>
+        <ul>
+          <li><a th:href="@{/jobs}">Browse Jobs</a></li>
+          <li><a th:href="@{/register}">Post a Job</a></li>
+          <li><a th:href="@{/register}">Create Resume</a></li>
+          <li><a th:href="@{/login}">Dashboard</a></li>
+        </ul>
+      </div>
+
+      <!-- Company -->
+      <div class="rh-footer-col">
+        <h6>Company</h6>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a th:href="@{/contact}">Contact</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+
+      <!-- Legal & Contact -->
+      <div class="rh-footer-col">
+        <h6>Support</h6>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms &amp; Conditions</a></li>
+          <li><a href="mailto:support@revhire.com">support@revhire.com</a></li>
+          <li><a href="tel:+919876543210">+91 98765 43210</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="rh-footer-bottom">
+      <span>&copy; 2026 RevHire. All Rights Reserved.</span>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <a href="#" style="color:#475569;font-size:18px;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#475569'"><i class="bi bi-linkedin"></i></a>
+        <a href="#" style="color:#475569;font-size:18px;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#475569'"><i class="bi bi-twitter-x"></i></a>
+        <a href="#" style="color:#475569;font-size:18px;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#475569'"><i class="bi bi-instagram"></i></a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  /* Highlight active nav link */
+  document.querySelectorAll('.rh-nav-links a').forEach(function(a) {
+    if (a.getAttribute('href') === window.location.pathname) {
+      a.style.background = 'var(--rh-blue-light)';
+      a.style.color = 'var(--rh-blue)';
+    }
+  });
+</script>
+
+</body>
+</html>

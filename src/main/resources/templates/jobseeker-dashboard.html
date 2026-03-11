@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- ============================================================
+     RevHire | jobseeker-dashboard.html
+     UI REDESIGN — Indeed-Style Job Seeker Dashboard
+     ============================================================
+     ALL Thymeleaf attributes preserved EXACTLY.
+     ============================================================ -->
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Job Seeker Dashboard | RevHire</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--rh-sidebar-bg:#0d1b2a;--rh-sidebar-border:rgba(255,255,255,0.07);--rh-sidebar-width:240px;--rh-accent:#2557a7;--rh-text-muted:#8a9bb0;--rh-text-light:#c8d6e5;--rh-text-white:#ffffff;--rh-hover-bg:rgba(255,255,255,0.06);--rh-active-bg:rgba(37,87,167,0.22);--rh-active-border:#2557a7;--rh-transition:all 0.18s ease;--rh-radius:10px}
+    *,*::before,*::after{box-sizing:border-box}
+    body{background:#f3f4f6;font-family:'Inter','Segoe UI',system-ui,sans-serif;font-size:14px;color:#111827;margin:0}
+    /* SIDEBAR */
+    .rh-sidebar{width:var(--rh-sidebar-width);height:100vh;position:fixed;top:0;left:0;background:var(--rh-sidebar-bg);display:flex;flex-direction:column;z-index:1000;box-shadow:4px 0 24px rgba(0,0,0,0.18);overflow:hidden}
+    .rh-sidebar-brand{display:flex;align-items:center;gap:12px;padding:22px 20px 18px;border-bottom:1px solid var(--rh-sidebar-border);text-decoration:none}
+    .rh-brand-icon{width:38px;height:38px;background:var(--rh-accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;flex-shrink:0;box-shadow:0 4px 12px rgba(37,87,167,0.45)}
+    .rh-brand-text{display:flex;flex-direction:column}
+    .rh-brand-name{font-size:17px;font-weight:700;color:var(--rh-text-white);letter-spacing:0.2px;line-height:1}
+    .rh-brand-tagline{font-size:10.5px;color:var(--rh-text-muted);letter-spacing:0.4px;margin-top:3px;text-transform:uppercase}
+    .rh-sidebar-section-label{font-size:10px;font-weight:600;color:var(--rh-text-muted);text-transform:uppercase;letter-spacing:1.2px;padding:18px 20px 8px}
+    .rh-sidebar-nav{flex:1;overflow-y:auto;padding:4px 0 8px;scrollbar-width:none}
+    .rh-sidebar-nav::-webkit-scrollbar{display:none}
+    .rh-nav-item{padding:3px 12px}
+    .rh-nav-link{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:var(--rh-radius);color:var(--rh-text-light);text-decoration:none;font-size:14px;font-weight:500;transition:var(--rh-transition);border-left:3px solid transparent}
+    .rh-nav-link:hover{background:var(--rh-hover-bg);color:var(--rh-text-white);text-decoration:none;border-left-color:rgba(37,87,167,0.5)}
+    .rh-nav-link.active{background:var(--rh-active-bg);color:var(--rh-text-white);border-left-color:var(--rh-active-border)}
+    .rh-nav-icon{width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;opacity:0.8}
+    .rh-nav-link:hover .rh-nav-icon,.rh-nav-link.active .rh-nav-icon{opacity:1}
+    .rh-nav-label{flex:1;line-height:1}
+    .rh-sidebar-divider{height:1px;background:var(--rh-sidebar-border);margin:10px 16px}
+    .rh-sidebar-footer{padding:14px 12px 18px;border-top:1px solid var(--rh-sidebar-border)}
+    .rh-logout-form{margin:0;padding:0}
+    .rh-logout-btn{width:100%;display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:var(--rh-radius);background:transparent;border:1px solid rgba(255,255,255,0.10);color:var(--rh-text-muted);font-size:14px;font-weight:500;cursor:pointer;transition:var(--rh-transition);text-align:left}
+    .rh-logout-btn:hover{background:rgba(220,38,38,0.12);border-color:rgba(220,38,38,0.35);color:#f87171}
+    .rh-logout-btn i{font-size:17px}
+    /* TOPBAR */
+    .rh-topbar{position:sticky;top:0;z-index:900;height:62px;background:#ffffff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;padding:0 28px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+    .rh-page-title{font-size:17px;font-weight:650;color:#111827;letter-spacing:-0.2px;margin:0;display:flex;align-items:center;gap:8px}
+    .rh-topbar-right{display:flex;align-items:center;gap:12px}
+    .rh-user-pill{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 6px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:999px;font-size:13px;font-weight:500;color:#374151}
+    .rh-user-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#2557a7,#3b82f6);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+    .rh-bell-btn{position:relative;width:40px;height:40px;border-radius:50%;background:#f9fafb;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#374151;font-size:17px;transition:all 0.18s ease;outline:none;text-decoration:none}
+    .rh-bell-btn:hover{background:#f3f4f6;border-color:#d1d5db;color:#111827}
+    /* LAYOUT */
+    .main-wrapper{margin-left:var(--rh-sidebar-width);min-height:100vh;display:flex;flex-direction:column}
+    .main-content{padding:28px 32px 48px;flex:1}
+    /* WELCOME */
+    .rh-welcome{background:linear-gradient(120deg,#1a4480 0%,#2557a7 55%,#3b82f6 100%);border-radius:16px;padding:30px 32px;margin-bottom:28px;position:relative;overflow:hidden}
+    .rh-welcome::before{content:'';position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,0.05);pointer-events:none}
+    .rh-welcome::after{content:'';position:absolute;right:80px;bottom:-80px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,0.04);pointer-events:none}
+    .rh-welcome-inner{position:relative;z-index:1}
+    .rh-welcome h2{font-size:22px;font-weight:700;color:#fff;margin:0 0 6px 0}
+    .rh-welcome p{font-size:14px;color:rgba(255,255,255,0.72);margin:0}
+    .rh-welcome-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .rh-btn-white{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;font-size:13px;font-weight:600;text-decoration:none;transition:all 0.2s ease}
+    .rh-btn-white:hover{background:rgba(255,255,255,0.25);color:#fff;text-decoration:none}
+    .rh-btn-white-solid{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;background:#fff;border:1px solid #fff;color:#2557a7;font-size:13px;font-weight:600;text-decoration:none;transition:all 0.2s ease}
+    .rh-btn-white-solid:hover{background:#eff6ff;color:#1a4480;text-decoration:none}
+    /* LABEL */
+    .rh-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#6b7280;margin:0 0 14px 2px}
+    /* PROGRESS */
+    .rh-progress-card{background:#fff;border-radius:14px;padding:20px 22px;border:1px solid #e5e7eb;box-shadow:0 1px 3px rgba(0,0,0,0.04);margin-bottom:28px;display:flex;align-items:center;gap:20px}
+    .rh-progress-icon{width:48px;height:48px;border-radius:12px;background:#eff6ff;color:#2557a7;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+    .rh-progress-body{flex:1;min-width:0}
+    .rh-progress-title{font-size:13px;font-weight:600;color:#111827;margin-bottom:8px}
+    .rh-progress-bar-track{height:8px;background:#e5e7eb;border-radius:999px;overflow:hidden}
+    .rh-progress-bar-fill{height:100%;background:linear-gradient(90deg,#2557a7,#3b82f6);border-radius:999px;transition:width 0.6s ease}
+    .rh-progress-pct{font-size:22px;font-weight:700;color:#2557a7;flex-shrink:0}
+    /* STATS */
+    .rh-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:28px}
+    .rh-stat-card{background:#fff;border-radius:14px;padding:22px 20px;border:1px solid #e5e7eb;box-shadow:0 1px 3px rgba(0,0,0,0.04);display:flex;align-items:flex-start;gap:16px;transition:box-shadow 0.2s ease,transform 0.2s ease;cursor:default}
+    .rh-stat-card:hover{box-shadow:0 6px 20px rgba(0,0,0,0.08);transform:translateY(-2px)}
+    .rh-stat-icon{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+    .rh-icon-blue{background:#eff6ff;color:#2557a7}
+    .rh-icon-green{background:#f0fdf4;color:#059669}
+    .rh-icon-orange{background:#fff7ed;color:#ea580c}
+    .rh-icon-purple{background:#faf5ff;color:#7c3aed}
+    .rh-stat-value{font-size:30px;font-weight:700;color:#111827;line-height:1;margin-bottom:5px}
+    .rh-stat-lbl{font-size:13px;color:#6b7280;font-weight:500;margin:0}
+    /* QUICK LINKS */
+    .rh-quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+    .rh-quick-link{background:#fff;border-radius:12px;padding:16px 18px;border:1px solid #e5e7eb;box-shadow:0 1px 3px rgba(0,0,0,0.04);display:flex;align-items:center;gap:12px;text-decoration:none;color:#374151;transition:all 0.18s ease}
+    .rh-quick-link:hover{box-shadow:0 4px 16px rgba(0,0,0,0.08);transform:translateY(-2px);color:#111827;text-decoration:none}
+    .rh-quick-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+    .rh-quick-label{font-size:13.5px;font-weight:600}
+    /* TABLE CARD */
+    .rh-table-card{background:#fff;border-radius:16px;border:1px solid #e5e7eb;box-shadow:0 1px 3px rgba(0,0,0,0.04);overflow:hidden;margin-bottom:28px}
+    .rh-table-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 16px;border-bottom:1px solid #f3f4f6}
+    .rh-table-title{font-size:15px;font-weight:700;color:#111827;display:flex;align-items:center;gap:8px;margin:0}
+    .rh-table-title i{color:#2557a7}
+    .rh-view-all{font-size:12.5px;font-weight:600;color:#2557a7;text-decoration:none;display:flex;align-items:center;gap:4px}
+    .rh-view-all:hover{text-decoration:underline;color:#1a4480}
+    .rh-table{width:100%;border-collapse:collapse}
+    .rh-table thead tr{background:#f9fafb}
+    .rh-table thead th{padding:11px 18px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:#6b7280;border-bottom:1px solid #e5e7eb;white-space:nowrap}
+    .rh-table tbody tr{border-bottom:1px solid #f3f4f6;transition:background 0.15s}
+    .rh-table tbody tr:last-child{border-bottom:none}
+    .rh-table tbody tr:hover{background:#f9fafb}
+    .rh-table tbody td{padding:14px 18px;color:#374151;font-size:13.5px;vertical-align:middle}
+    .rh-job-cell{display:flex;align-items:center;gap:11px}
+    .rh-job-avatar{width:36px;height:36px;border-radius:9px;background:#eff6ff;color:#2557a7;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .rh-job-name{font-weight:600;color:#111827;font-size:13.5px}
+    .rh-loc{display:flex;align-items:center;gap:5px;color:#6b7280;font-size:13px}
+    .rh-loc i{font-size:13px;color:#9ca3af}
+    .rh-salary{font-weight:600;color:#059669;font-size:13px}
+    /* BADGES */
+    .rh-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+    .rh-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+    .rh-badge-applied{background:#eff6ff;color:#2557a7}
+    .rh-badge-shortlisted{background:#f0fdf4;color:#059669}
+    .rh-badge-rejected{background:#fef2f2;color:#dc2626}
+    .rh-badge-withdrawn{background:#f9fafb;color:#6b7280;border:1px solid #e5e7eb}
+    /* ACTION BUTTONS */
+    .rh-btn-apply{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:8px;background:#2557a7;color:#fff;border:1px solid #2557a7;font-size:12px;font-weight:600;text-decoration:none;transition:all 0.15s;white-space:nowrap}
+    .rh-btn-apply:hover{background:#1a4480;border-color:#1a4480;color:#fff;text-decoration:none}
+    .rh-btn-withdraw{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:8px;background:#fef2f2;color:#dc2626;border:1px solid #fecaca;font-size:12px;font-weight:600;text-decoration:none;transition:all 0.15s;white-space:nowrap}
+    .rh-btn-withdraw:hover{background:#dc2626;color:#fff;border-color:#dc2626;text-decoration:none}
+    /* EMPTY */
+    .rh-empty{text-align:center;padding:48px 20px}
+    .rh-empty i{font-size:44px;color:#d1d5db;display:block;margin-bottom:14px}
+    .rh-empty p{color:#9ca3af;font-size:14px;margin:0}
+    /* RESPONSIVE */
+    @media(max-width:1200px){.rh-stats-grid{grid-template-columns:repeat(2,1fr)}.rh-quick-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:991.98px){.main-wrapper{margin-left:0}.main-content{padding:20px 16px}.rh-sidebar{transform:translateX(-100%);transition:transform 0.25s ease}.rh-sidebar.show{transform:translateX(0)}.rh-stats-grid{grid-template-columns:repeat(2,1fr)}.rh-quick-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:576px){.rh-stats-grid{grid-template-columns:1fr}.rh-quick-grid{grid-template-columns:1fr}.rh-welcome{padding:22px 20px}.rh-welcome h2{font-size:18px}.rh-welcome-actions{flex-direction:column}.rh-user-pill span{display:none}.rh-progress-card{flex-wrap:wrap}}
+  </style>
+</head>
+
+<body>
+
+<!-- ═══════════════════════════════
+     JOB SEEKER SIDEBAR
+     BACKEND SAFE: all th:href preserved
+     ═══════════════════════════════ -->
+<aside class="rh-sidebar" id="rhSidebar">
+
+  <a class="rh-sidebar-brand" th:href="@{/jobseeker/dashboard}">
+    <div class="rh-brand-icon">R</div>
+    <div class="rh-brand-text">
+      <span class="rh-brand-name">RevHire</span>
+      <span class="rh-brand-tagline">Job Seeker Portal</span>
+    </div>
+  </a>
+
+  <nav class="rh-sidebar-nav">
+
+    <div class="rh-sidebar-section-label">Main Menu</div>
+
+    <div class="rh-nav-item">
+      <a class="rh-nav-link" th:href="@{/jobseeker/dashboard}">
+        <span class="rh-nav-icon"><i class="bi bi-speedometer2"></i></span>
+        <span class="rh-nav-label">Dashboard</span>
+      </a>
+    </div>
+
+    <div class="rh-nav-item">
+      <a class="rh-nav-link" th:href="@{/jobs/search}">
+        <span class="rh-nav-icon"><i class="bi bi-search"></i></span>
+        <span class="rh-nav-label">Search Jobs</span>
+      </a>
+    </div>
+
+    <div class="rh-nav-item">
+      <a class="rh-nav-link" th:href="@{/jobseeker/applications}">
+        <span class="rh-nav-icon"><i class="bi bi-briefcase"></i></span>
+        <span class="rh-nav-label">My Applications</span>
+      </a>
+    </div>
+
+    <div class="rh-nav-item">
+      <a class="rh-nav-link" th:href="@{/jobseeker/saved-jobs}">
+        <span class="rh-nav-icon"><i class="bi bi-bookmark"></i></span>
+        <span class="rh-nav-label">Saved Jobs</span>
+      </a>
+    </div>
+
+    <div class="rh-nav-item">
+      <a class="rh-nav-link" th:href="@{/jobseeker/notifications}">
+        <span class="rh-nav-icon"><i class="bi bi-bell"></i></span>
+        <span class="rh-nav-label">Notifications</span>
+      </a>
+    </div>
+
+    <div class="rh-sidebar-divider"></div>
+    <div class="rh-sidebar-section-label">My Profile</div>
+
+    <div class="rh-nav-item">
+      <a class="rh-nav-link" th:href="@{/jobseeker/profile}">
+        <span class="rh-nav-icon"><i class="bi bi-person-circle"></i></span>
+        <span class="rh-nav-label">View Profile</span>
+      </a>
+    </div>
+
+    <div class="rh-nav-item">
+      <a class="rh-nav-link" th:href="@{/jobseeker/update-profile}">
+        <span class="rh-nav-icon"><i class="bi bi-pencil-square"></i></span>
+        <span class="rh-nav-label">Update Profile</span>
+      </a>
+    </div>
+
+    <div class="rh-sidebar-divider"></div>
+    <div class="rh-sidebar-section-label">Resume</div>
+
+    <div class="rh-nav-item">
+      <a class="rh-nav-link" th:href="@{/jobseeker/view-text-resume}">
+        <span class="rh-nav-icon"><i class="bi bi-file-text"></i></span>
+        <span class="rh-nav-label">View Resume</span>
+      </a>
+    </div>
+
+    <!-- BACKEND SAFE: th:if="${resumeFile != null}" preserved -->
+    <div th:if="${resumeFile != null}" class="rh-nav-item">
+      <a class="rh-nav-link" th:href="@{/api/resume-files/view/{id}(id=${resumeFile.id})}" target="_blank">
+        <span class="rh-nav-icon"><i class="bi bi-file-earmark-pdf"></i></span>
+        <span class="rh-nav-label">View PDF Resume</span>
+      </a>
+    </div>
+
+    <div class="rh-nav-item">
+      <a class="rh-nav-link" th:href="@{/jobseeker/upload-resume}">
+        <span class="rh-nav-icon"><i class="bi bi-cloud-upload"></i></span>
+        <span class="rh-nav-label">Upload PDF Resume</span>
+      </a>
+    </div>
+
+  </nav>
+
+  <!-- BACKEND SAFE: th:action="@{/logout}" method="post" preserved -->
+  <div class="rh-sidebar-footer">
+    <form th:action="@{/logout}" method="post" class="rh-logout-form">
+      <button type="submit" class="rh-logout-btn">
+        <i class="bi bi-box-arrow-left"></i>
+        <span>Logout</span>
+      </button>
+    </form>
+  </div>
+
+</aside>
+
+<!-- ═══════════════════════════════
+     MAIN WRAPPER
+     ═══════════════════════════════ -->
+<div class="main-wrapper">
+
+  <!-- TOP NAVBAR -->
+  <nav class="rh-topbar">
+    <div>
+      <h1 class="rh-page-title">
+        <i class="bi bi-grid-1x2-fill" style="color:#2557a7;font-size:15px;"></i>
+        Job Seeker Dashboard
+      </h1>
+    </div>
+    <div class="rh-topbar-right">
+      <!-- BACKEND SAFE: th:text="${username}" preserved -->
+      <div class="rh-user-pill">
+        <div class="rh-user-avatar"><i class="bi bi-person-fill" style="font-size:13px;"></i></div>
+        <span th:text="${username}">user@example.com</span>
+      </div>
+      <a th:href="@{/jobseeker/notifications}" class="rh-bell-btn" aria-label="Notifications">
+        <i class="bi bi-bell"></i>
+      </a>
+    </div>
+  </nav>
+
+  <main class="main-content">
+
+    <!-- WELCOME BANNER — BACKEND SAFE: th:text="${username}" preserved -->
+    <div class="rh-welcome mb-4">
+      <div class="rh-welcome-inner">
+        <h2>Welcome back, <span th:text="${username}">User</span> 👋</h2>
+        <p>Your next opportunity is just a search away. Explore jobs, track applications, and build your career.</p>
+
+      </div>
+    </div>
+
+    <!-- PROFILE COMPLETION — BACKEND SAFE: th:style & th:text="${profileCompletion}" preserved -->
+    <div class="rh-progress-card">
+      <div class="rh-progress-icon"><i class="bi bi-person-check-fill"></i></div>
+      <div class="rh-progress-body">
+        <div class="rh-progress-title">Profile Completion — strengthen your profile to get better job matches</div>
+        <div class="rh-progress-bar-track">
+          <div class="rh-progress-bar-fill" th:style="'width:'+${profileCompletion}+'%'"></div>
+        </div>
+      </div>
+      <div class="rh-progress-pct" th:text="${profileCompletion} + '%'">0%</div>
+    </div>
+
+    <!-- STATS — BACKEND SAFE: th:text="${appliedJobs}", "${savedJobs}", "${jobs.size()}", "${profileCompletion}" preserved -->
+    <p class="rh-label">Overview</p>
+    <div class="rh-stats-grid">
+
+      <div class="rh-stat-card">
+        <div class="rh-stat-icon rh-icon-blue"><i class="bi bi-send-fill"></i></div>
+        <div>
+          <div class="rh-stat-value" th:text="${appliedJobs}">0</div>
+          <p class="rh-stat-lbl">Applied Jobs</p>
+        </div>
+      </div>
+
+      <div class="rh-stat-card">
+        <div class="rh-stat-icon rh-icon-orange"><i class="bi bi-bookmark-fill"></i></div>
+        <div>
+          <div class="rh-stat-value" th:text="${savedJobs}">0</div>
+          <p class="rh-stat-lbl">Saved Jobs</p>
+        </div>
+      </div>
+
+      <div class="rh-stat-card">
+        <div class="rh-stat-icon rh-icon-green"><i class="bi bi-briefcase-fill"></i></div>
+        <div>
+          <div class="rh-stat-value" th:text="${jobs.size()}">0</div>
+          <p class="rh-stat-lbl">Active Jobs</p>
+        </div>
+      </div>
+
+      <div class="rh-stat-card">
+        <div class="rh-stat-icon rh-icon-purple"><i class="bi bi-person-badge-fill"></i></div>
+        <div>
+          <div class="rh-stat-value" th:text="${profileCompletion} + '%'">0%</div>
+          <p class="rh-stat-lbl">Profile Complete</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- QUICK ACTIONS — BACKEND SAFE: all th:href preserved -->
+    <p class="rh-label">Quick Actions</p>
+    <div class="rh-quick-grid">
+      <a class="rh-quick-link" th:href="@{/jobs/search}">
+        <div class="rh-quick-icon" style="background:#eff6ff;color:#2557a7;"><i class="bi bi-search"></i></div>
+        <span class="rh-quick-label">Search Jobs</span>
+      </a>
+      <a class="rh-quick-link" th:href="@{/jobseeker/saved-jobs}">
+        <div class="rh-quick-icon" style="background:#fff7ed;color:#ea580c;"><i class="bi bi-bookmark-star"></i></div>
+        <span class="rh-quick-label">Saved Jobs</span>
+      </a>
+      <a class="rh-quick-link" th:href="@{/jobseeker/update-profile}">
+        <div class="rh-quick-icon" style="background:#f0fdf4;color:#059669;"><i class="bi bi-pencil-square"></i></div>
+        <span class="rh-quick-label">Update Profile</span>
+      </a>
+      <a class="rh-quick-link" th:href="@{/jobseeker/view-text-resume}">
+        <div class="rh-quick-icon" style="background:#faf5ff;color:#7c3aed;"><i class="bi bi-file-earmark-person"></i></div>
+        <span class="rh-quick-label">View Resume</span>
+      </a>
+    </div>
+
+    <!-- LATEST JOBS — BACKEND SAFE: th:each="job : ${jobs}" + all job.* attrs preserved -->
+    <p class="rh-label">Latest Jobs</p>
+    <div class="rh-table-card">
+      <div class="rh-table-header">
+        <h3 class="rh-table-title"><i class="bi bi-lightning-charge-fill"></i> Latest Available Jobs</h3>
+        <a th:href="@{/jobs/search}" class="rh-view-all">View all <i class="bi bi-arrow-right"></i></a>
+      </div>
+      <div class="table-responsive">
+        <table class="rh-table">
+          <thead>
+            <tr>
+              <th>Job Title</th>
+              <th>Company</th>
+              <th>Location</th>
+              <th>Salary Range</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="job : ${jobs}">
+              <td>
+                <div class="rh-job-cell">
+                  <div class="rh-job-avatar"><i class="bi bi-briefcase"></i></div>
+                  <!-- BACKEND SAFE: th:text="${job.title}" preserved -->
+                  <span class="rh-job-name" th:text="${job.title}"></span>
+                </div>
+              </td>
+              <!-- BACKEND SAFE: th:text="${job.companyName}" preserved -->
+              <td th:text="${job.companyName}"></td>
+              <td>
+                <div class="rh-loc">
+                  <i class="bi bi-geo-alt-fill"></i>
+                  <!-- BACKEND SAFE: th:text="${job.location}" preserved -->
+                  <span th:text="${job.location}"></span>
+                </div>
+              </td>
+              <td>
+                <span class="rh-salary">
+                  <!-- BACKEND SAFE: th:text="${job.salaryMin}" & "${job.salaryMax}" preserved -->
+                  &#8377;<span th:text="${job.salaryMin}"></span> &ndash; &#8377;<span th:text="${job.salaryMax}"></span>
+                </span>
+              </td>
+              <td>
+                <!-- BACKEND SAFE: th:href="@{/jobs/apply-form/{id}(id=${job.id})}" preserved -->
+                <a class="rh-btn-apply" th:href="@{/jobs/apply-form/{id}(id=${job.id})}">
+                  <i class="bi bi-send"></i> Apply
+                </a>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(jobs)}">
+              <td colspan="5">
+                <div class="rh-empty">
+                  <i class="bi bi-briefcase"></i>
+                  <p>No active jobs at the moment. Check back soon!</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RECENT APPLICATIONS — BACKEND SAFE: th:each="app : ${applications}" + all app.* attrs preserved -->
+    <p class="rh-label">Recent Activity</p>
+    <div class="rh-table-card">
+      <div class="rh-table-header">
+        <h3 class="rh-table-title"><i class="bi bi-clock-history"></i> My Recent Applications</h3>
+        <a th:href="@{/jobseeker/applications}" class="rh-view-all">View all <i class="bi bi-arrow-right"></i></a>
+      </div>
+      <div class="table-responsive">
+        <table class="rh-table">
+          <thead>
+            <tr>
+              <th>Job Title</th>
+              <th>Company</th>
+              <th>Status</th>
+              <th>Applied Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- BACKEND SAFE: th:each="app : ${applications}" preserved -->
+            <tr th:each="app : ${applications}">
+              <td>
+                <div class="rh-job-cell">
+                  <div class="rh-job-avatar" style="background:#f0fdf4;color:#059669;">
+                    <i class="bi bi-file-earmark-check"></i>
+                  </div>
+                  <!-- BACKEND SAFE: th:text="${app.jobTitle}" preserved -->
+                  <span class="rh-job-name" th:text="${app.jobTitle}"></span>
+                </div>
+              </td>
+              <!-- BACKEND SAFE: th:text="${app.companyName}" preserved -->
+              <td th:text="${app.companyName}"></td>
+              <td>
+                <!-- BACKEND SAFE: all th:if="${app.status==...}" preserved -->
+                <span class="rh-badge rh-badge-applied"     th:if="${app.status=='APPLIED'}">Applied</span>
+                <span class="rh-badge rh-badge-shortlisted" th:if="${app.status=='SHORTLISTED'}">Shortlisted</span>
+                <span class="rh-badge rh-badge-rejected"    th:if="${app.status=='REJECTED'}">Rejected</span>
+                <span class="rh-badge rh-badge-withdrawn"   th:if="${app.status=='WITHDRAWN'}">Withdrawn</span>
+              </td>
+              <!-- BACKEND SAFE: th:text="${app.appliedAt}" preserved -->
+              <td th:text="${app.appliedAt}"></td>
+              <td>
+                <!-- BACKEND SAFE: th:if="${app.status=='APPLIED'}" & th:href preserved -->
+                <a class="rh-btn-withdraw"
+                   th:if="${app.status=='APPLIED'}"
+                   th:href="@{/jobseeker/withdraw/{id}(id=${app.id})}">
+                  <i class="bi bi-x-circle"></i> Withdraw
+                </a>
+                <span th:if="${app.status!='APPLIED'}" style="font-size:12px;color:#9ca3af;">&#8212;</span>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(applications)}">
+              <td colspan="5">
+                <div class="rh-empty">
+                  <i class="bi bi-send"></i>
+                  <p>You haven't applied to any jobs yet. Start exploring!</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* Active nav highlight — pure UI, zero backend interaction */
+  (function(){
+    var links=document.querySelectorAll('.rh-nav-link');
+    var path=window.location.pathname;
+    links.forEach(function(l){
+      var href=l.getAttribute('href');
+      if(href&&path===href)l.classList.add('active');
+    });
+  })();
+</script>
+
+</body>
+</html>

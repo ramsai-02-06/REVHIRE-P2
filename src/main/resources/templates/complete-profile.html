@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Complete Your Profile | RevHire</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--accent:#2557a7;--accent-light:#eff6ff;--border:#e5e7eb;--gray-bg:#f3f4f6;--text:#111827;--muted:#6b7280;--font:"Inter","Segoe UI",system-ui,sans-serif}
+    *,*::before,*::after{box-sizing:border-box}
+    body{font-family:var(--font);font-size:14px;color:var(--text);background:var(--gray-bg);margin:0;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:40px 16px 60px}
+    .rh-card{background:#fff;border:1px solid var(--border);border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,.09);width:100%;max-width:580px;overflow:hidden}
+    .rh-card-top{background:linear-gradient(120deg,#1a4480,#2557a7);padding:28px 32px 24px;display:flex;align-items:center;gap:16px}
+    .rh-card-top-icon{width:52px;height:52px;background:rgba(255,255,255,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;flex-shrink:0}
+    .rh-card-top h1{font-size:20px;font-weight:700;color:#fff;margin:0 0 4px}.rh-card-top p{font-size:13px;color:rgba(255,255,255,.7);margin:0}
+    .rh-step-bar{display:flex;align-items:center;gap:0;padding:0 32px;background:#f8faff;border-bottom:1px solid var(--border)}
+    .rh-step{display:flex;align-items:center;gap:8px;padding:14px 0;flex:1;font-size:12px;font-weight:600;color:#9ca3af}
+    .rh-step.active{color:var(--accent)}.rh-step-num{width:22px;height:22px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+    .rh-step-sep{width:24px;height:2px;background:#e5e7eb;flex-shrink:0}
+    .rh-card-body{padding:32px}
+    .rh-label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:7px}
+    .rh-input,.rh-select,.rh-textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:var(--font);color:var(--text);background:#fff;outline:none;transition:border-color .15s;appearance:none}
+    .rh-input:focus,.rh-select:focus,.rh-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,87,167,.10)}
+    .rh-textarea{resize:vertical;min-height:90px;line-height:1.6}
+    .rh-field-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .rh-field-group{margin-bottom:20px}.rh-field-group:last-child{margin-bottom:0}
+    .rh-divider{height:1px;background:var(--border);margin:24px 0}
+    .rh-submit-btn{width:100%;padding:12px;border-radius:10px;background:var(--accent);color:#fff;border:none;font-size:15px;font-weight:700;font-family:var(--font);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s}.rh-submit-btn:hover{background:#1a4480}
+    .rh-brand{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:24px}
+    .rh-brand-icon{width:36px;height:36px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#fff}
+    .rh-brand-name{font-size:18px;font-weight:800;color:var(--text)}
+    @media(max-width:560px){.rh-field-row{grid-template-columns:1fr}.rh-card-body{padding:22px}.rh-card-top{padding:22px}}
+  </style>
+</head>
+<body>
+  <div class="rh-card">
+    <div class="rh-card-top">
+      <div class="rh-card-top-icon"><i class="bi bi-person-check-fill"></i></div>
+      <div><h1>Complete Your Profile</h1><p>Step 1 of 2 — Tell us about yourself</p></div>
+    </div>
+    <div class="rh-step-bar">
+      <div class="rh-step active"><span class="rh-step-num">1</span><span>Profile</span></div>
+      <div class="rh-step-sep"></div>
+      <div class="rh-step"><span class="rh-step-num">2</span><span>Resume</span></div>
+    </div>
+    <div class="rh-card-body">
+      <form th:action="@{/jobseeker/save-profile}" th:object="${jobSeeker}" method="post">
+        <div class="rh-field-row">
+          <div class="rh-field-group">
+            <label class="rh-label">Full Name</label>
+            <input type="text" class="rh-input" th:field="*{fullName}" placeholder="Your full name" required>
+          </div>
+          <div class="rh-field-group">
+            <label class="rh-label">Phone Number</label>
+            <input type="text" class="rh-input" th:field="*{phone}" placeholder="10-digit mobile number" required>
+          </div>
+        </div>
+        <div class="rh-field-group">
+          <label class="rh-label">Location</label>
+          <input type="text" class="rh-input" th:field="*{location}" placeholder="City / State" required>
+        </div>
+        <div class="rh-field-group">
+          <label class="rh-label">Employment Status</label>
+          <select class="rh-select" th:field="*{employmentStatus}" required>
+            <option value="">Select your status</option>
+            <option value="OPEN_TO_WORK">Open to Work</option>
+            <option value="SERVING_NOTICE">Serving Notice Period</option>
+            <option value="SHORT_NOTICE">Available in Short Notice</option>
+            <option value="CURRENTLY_WORKING">Currently Working</option>
+            <option value="FRESHER">Fresher</option>
+          </select>
+        </div>
+        <div class="rh-field-group">
+          <label class="rh-label">Profile Summary</label>
+          <textarea class="rh-textarea" rows="4" th:field="*{profileSummary}" placeholder="Write about your skills, experience, and goals..." required></textarea>
+        </div>
+        <div class="rh-divider"></div>
+        <button type="submit" class="rh-submit-btn"><i class="bi bi-arrow-right-circle-fill"></i> Save & Continue</button>
+      </form>
+    </div>
+  </div>
+</body></html>

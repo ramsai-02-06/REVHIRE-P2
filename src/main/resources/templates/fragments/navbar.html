@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="navbar">
+
+<style>
+
+  .rh-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    height: 62px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .rh-topbar-left { display: flex; align-items: center; }
+
+  .rh-page-title {
+    font-size: 17px;
+    font-weight: 650;
+    color: #111827;
+    letter-spacing: -0.2px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .rh-topbar-right { display: flex; align-items: center; }
+
+  .rh-bell-btn {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #374151;
+    font-size: 17px;
+    transition: all 0.18s ease;
+    text-decoration: none;
+  }
+
+  .rh-bell-btn:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    color: #111827;
+  }
+
+  .rh-notif-badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    background: #dc2626;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+    line-height: 1;
+  }
+
+</style>
+
+<nav class="rh-topbar">
+
+  <div class="rh-topbar-left">
+    <h1 class="rh-page-title">
+      <i class="bi bi-grid-1x2-fill" style="color:#2557a7;font-size:15px;"></i>
+      Employer Dashboard
+    </h1>
+  </div>
+
+  <div class="rh-topbar-right">
+
+    <!-- Bell links directly to notifications page — popup removed entirely -->
+    <a th:href="@{/employer/notifications}" class="rh-bell-btn" aria-label="Notifications">
+      <i class="bi bi-bell"></i>
+      <span class="rh-notif-badge"
+            th:if="${notificationCount != null and notificationCount > 0}"
+            th:text="${notificationCount}"></span>
+    </a>
+
+  </div>
+
+</nav>
+
+</div>
+
+</html>

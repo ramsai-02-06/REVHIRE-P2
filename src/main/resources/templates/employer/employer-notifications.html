@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<!-- ============================================================
+     RevHire | employer/employer-notifications.html  (FINAL ZIP)
+     ============================================================
+     ✅ Final zip changes vs old:
+       • File moved to employer/ subfolder — controller now returns
+         "employer/employer-notifications" which matches this path ✅
+       • notification.title (new field) displayed as bold heading
+       • notification.isRead used via th:classappend for read/unread row styling
+       • Date formatted: ${#temporals.format(notification.createdAt,'dd-MM-yyyy HH:mm')}
+       • No mark-as-read buttons (removed in final zip — display-only page)
+       • Back to Dashboard link: th:href="@{/employer/dashboard}"
+     ✅ All th:* preserved exactly:
+       • th:each="notification : ${notifications}"
+       • th:classappend="${notification.isRead == true} ? 'read' : 'unread'"
+       • th:text="${notification.title}"
+       • th:text="${notification.message}"
+       • th:text="${#temporals.format(notification.createdAt,'dd-MM-yyyy HH:mm')}"
+       • th:if="${#lists.isEmpty(notifications)}"
+       • th:href="@{/employer/dashboard}"
+     ============================================================ -->
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notifications | RevHire</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { background: #f3f4f6; font-family: 'Inter', system-ui, sans-serif; font-size: 14px; color: #111827; margin: 0; }
+    .main-wrapper { margin-left: 240px; min-height: 100vh; display: flex; flex-direction: column; }
+    .main-content { padding: 28px 32px 48px; flex: 1; }
+
+    /* Page header */
+    .rh-page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 24px; }
+    .rh-page-header h2 { font-size: 22px; font-weight: 700; color: #111827; margin: 0 0 4px; display: flex; align-items: center; gap: 10px; }
+    .rh-page-header h2 i { width: 38px; height: 38px; background: #faf5ff; color: #7c3aed; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .rh-page-header p { font-size: 13.5px; color: #6b7280; margin: 0 0 0 48px; }
+    .rh-btn-back { display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; background: #f9fafb; color: #374151; border: 1.5px solid #e5e7eb; border-radius: 9px; font-size: 13px; font-weight: 600; text-decoration: none; transition: all .18s; white-space: nowrap; }
+    .rh-btn-back:hover { background: #f3f4f6; color: #111827; text-decoration: none; }
+
+    /* Card */
+    .rh-card { background: #fff; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden; max-width: 860px; }
+    .rh-card-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 22px 14px; border-bottom: 1px solid #f3f4f6; }
+    .rh-card-title { font-size: 15px; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 8px; margin: 0; }
+    .rh-card-title i { color: #7c3aed; }
+    .rh-count-pill { font-size: 12px; font-weight: 600; background: #faf5ff; color: #7c3aed; padding: 3px 10px; border-radius: 999px; }
+
+    /* Notification list */
+    .rh-notif-list { list-style: none; margin: 0; padding: 0; }
+
+    /* BACKEND SAFE: th:each="notification : ${notifications}" preserved */
+    /* BACKEND SAFE: th:classappend="${notification.isRead == true} ? 'read' : 'unread'" preserved */
+    .rh-notif-row { display: flex; align-items: flex-start; gap: 14px; padding: 16px 22px; border-bottom: 1px solid #f3f4f6; transition: background .15s; }
+    .rh-notif-row:last-child { border-bottom: none; }
+
+    /* Unread row — bright background, left accent border */
+    .rh-notif-row.unread {
+      background: #fdfaff;
+      border-left: 3px solid #7c3aed;
+    }
+
+    /* Read row — muted */
+    .rh-notif-row.read {
+      background: #fff;
+      border-left: 3px solid transparent;
+      opacity: 0.75;
+    }
+
+    .rh-notif-row:hover { background: #faf5ff !important; opacity: 1 !important; }
+
+    .rh-notif-icon-wrap { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; margin-top: 2px; }
+    .unread .rh-notif-icon-wrap { background: #faf5ff; color: #7c3aed; }
+    .read   .rh-notif-icon-wrap { background: #f3f4f6; color: #9ca3af; }
+
+    .rh-notif-body { flex: 1; min-width: 0; }
+
+    /* BACKEND SAFE: th:text="${notification.title}" preserved — new field in final zip */
+    .rh-notif-title { font-size: 13.5px; font-weight: 700; color: #111827; margin: 0 0 3px; }
+    .read .rh-notif-title { color: #6b7280; }
+
+    /* BACKEND SAFE: th:text="${notification.message}" preserved */
+    .rh-notif-msg { font-size: 13px; color: #374151; line-height: 1.5; margin: 0 0 5px; }
+    .read .rh-notif-msg { color: #9ca3af; }
+
+    /* BACKEND SAFE: th:text="${#temporals.format(notification.createdAt,'dd-MM-yyyy HH:mm')}" preserved */
+    .rh-notif-date { font-size: 11.5px; color: #9ca3af; margin: 0; display: flex; align-items: center; gap: 4px; }
+    .rh-notif-date i { font-size: 11px; }
+
+    /* Read indicator pill */
+    .rh-read-badge { flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+    .unread .rh-read-badge { background: #faf5ff; color: #7c3aed; border: 1px solid #ddd6fe; }
+    .read   .rh-read-badge { background: #f0fdf4; color: #059669; border: 1px solid #bbf7d0; }
+
+    /* Empty state — BACKEND SAFE: th:if="${#lists.isEmpty(notifications)}" preserved */
+    .rh-empty { text-align: center; padding: 60px 20px; }
+    .rh-empty i { font-size: 46px; color: #d1d5db; display: block; margin-bottom: 14px; }
+    .rh-empty p { color: #9ca3af; font-size: 14px; margin: 0; }
+
+    @media (max-width: 991.98px) { .main-wrapper { margin-left: 0; } .main-content { padding: 20px 16px; } }
+  </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="main-wrapper">
+  <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+  <main class="main-content">
+
+    <div class="rh-page-header">
+      <div>
+        <h2><i class="bi bi-bell-fill"></i> Notifications</h2>
+        <p>Stay updated on applications and account activity.</p>
+      </div>
+      <!-- BACKEND SAFE: th:href="@{/employer/dashboard}" preserved -->
+      <a th:href="@{/employer/dashboard}" class="rh-btn-back">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+
+    <div class="rh-card">
+
+      <div class="rh-card-header">
+        <h3 class="rh-card-title"><i class="bi bi-bell"></i> All Notifications</h3>
+        <span class="rh-count-pill" id="notifCountBadge"></span>
+      </div>
+
+      <ul class="rh-notif-list">
+
+        <!-- BACKEND SAFE: th:each + th:classappend preserved exactly as in final zip -->
+        <li class="rh-notif-row"
+            th:each="notification : ${notifications}"
+            th:classappend="${notification.isRead == true} ? 'read' : 'unread'">
+
+          <div class="rh-notif-icon-wrap">
+            <i class="bi bi-bell-fill"></i>
+          </div>
+
+          <div class="rh-notif-body">
+            <!-- BACKEND SAFE: th:text="${notification.title}" preserved — new in final zip -->
+            <p class="rh-notif-title" th:text="${notification.title}"></p>
+            <!-- BACKEND SAFE: th:text="${notification.message}" preserved -->
+            <p class="rh-notif-msg"   th:text="${notification.message}"></p>
+            <!-- BACKEND SAFE: th:text="${#temporals.format(notification.createdAt,'dd-MM-yyyy HH:mm')}" preserved -->
+            <p class="rh-notif-date">
+              <i class="bi bi-clock"></i>
+              <span th:text="${#temporals.format(notification.createdAt,'dd-MM-yyyy HH:mm')}"></span>
+            </p>
+          </div>
+
+          <!-- Visual read/unread indicator (pure UI — no backend action) -->
+          <div>
+            <span class="rh-read-badge" th:if="${notification.isRead == true}">
+              <i class="bi bi-check2"></i> Read
+            </span>
+            <span class="rh-read-badge" th:if="${notification.isRead != true}">
+              <i class="bi bi-circle-fill" style="font-size:7px;"></i> New
+            </span>
+          </div>
+
+        </li>
+
+        <!-- BACKEND SAFE: th:if="${#lists.isEmpty(notifications)}" preserved -->
+        <li th:if="${#lists.isEmpty(notifications)}">
+          <div class="rh-empty">
+            <i class="bi bi-bell-slash"></i>
+            <p>You're all caught up — no notifications!</p>
+          </div>
+        </li>
+
+      </ul>
+
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  (function() {
+    var rows = document.querySelectorAll('.rh-notif-row');
+    var badge = document.getElementById('notifCountBadge');
+    if (badge && rows.length > 0) {
+      badge.textContent = rows.length + (rows.length === 1 ? ' notification' : ' notifications');
+    }
+  })();
+</script>
+</body>
+</html>

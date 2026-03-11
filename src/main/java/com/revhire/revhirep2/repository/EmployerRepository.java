@@ -1,0 +1,18 @@
+package com.revhire.revhirep2.repository;
+
+import com.revhire.revhirep2.entity.Employer;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface EmployerRepository extends JpaRepository<Employer, Long>  // long refers to long Id primary key 
+{
+
+    Optional<Employer> findByUserId(Long userId);
+
+    Optional<Employer> findByUserEmail(String email);
+    
+    
+    
+    boolean existsByUserId(Long userId);
+}

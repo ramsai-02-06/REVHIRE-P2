@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Upload Resume | RevHire</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--accent:#2557a7;--accent-light:#eff6ff;--border:#e5e7eb;--gray-bg:#f3f4f6;--text:#111827;--muted:#6b7280;--font:"Inter","Segoe UI",system-ui,sans-serif}
+    *,*::before,*::after{box-sizing:border-box}
+    body{font-family:var(--font);font-size:14px;color:var(--text);background:var(--gray-bg);margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 16px}
+    .rh-card{background:#fff;border:1px solid var(--border);border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,.09);width:100%;max-width:480px;padding:44px 40px 40px;text-align:center}
+    .rh-upload-icon{width:72px;height:72px;background:var(--accent-light);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--accent);margin:0 auto 22px}
+    .rh-title{font-size:22px;font-weight:700;margin:0 0 8px}
+    .rh-sub{font-size:13.5px;color:var(--muted);margin:0 0 32px;line-height:1.6}
+    .rh-file-zone{border:2px dashed var(--border);border-radius:12px;padding:28px 20px;background:#fafafa;cursor:pointer;transition:border-color .15s,background .15s;margin-bottom:8px;position:relative}
+    .rh-file-zone:hover{border-color:var(--accent);background:var(--accent-light)}
+    .rh-file-zone i{font-size:28px;color:var(--accent);display:block;margin-bottom:8px}
+    .rh-file-zone p{font-size:13px;color:var(--muted);margin:0}
+    .rh-file-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .rh-selected-file{font-size:12.5px;color:#374151;background:#f3f4f6;border-radius:8px;padding:7px 12px;margin-bottom:20px;display:none;align-items:center;gap:7px}
+    .rh-hint{font-size:12px;color:#9ca3af;margin:0 0 24px;display:flex;align-items:center;justify-content:center;gap:5px}
+    .rh-divider{height:1px;background:var(--border);margin:0 0 24px}
+    .rh-submit-btn{width:100%;padding:12px;border-radius:10px;background:var(--accent);color:#fff;border:none;font-size:15px;font-weight:700;font-family:var(--font);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s}.rh-submit-btn:hover{background:#1a4480}
+    .rh-brand{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:30px}
+    .rh-brand-icon{width:36px;height:36px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#fff}
+    .rh-brand-name{font-size:18px;font-weight:800;color:var(--text)}
+  </style>
+</head>
+<body>
+  <div class="rh-card">
+    <div class="rh-brand">
+      <div class="rh-brand-icon">R</div>
+      <span class="rh-brand-name">RevHire</span>
+    </div>
+    <div class="rh-upload-icon"><i class="bi bi-cloud-arrow-up-fill"></i></div>
+    <h1 class="rh-title">Upload Your Resume</h1>
+    <p class="rh-sub">Upload a PDF or DOCX resume so employers can view it directly on your profile.</p>
+
+    <form th:action="@{/jobseeker/save-resume-file}" method="post" enctype="multipart/form-data" id="uploadForm">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+      <div class="rh-file-zone" id="fileZone">
+        <i class="bi bi-file-earmark-arrow-up"></i>
+        <p><strong>Click to browse</strong> or drag and drop your file here</p>
+        <input type="file" name="file" id="fileInput" accept=".pdf,.docx" required onchange="showFile(this)">
+      </div>
+      <div class="rh-selected-file" id="selectedFile"><i class="bi bi-file-earmark-check" style="color:#059669;"></i><span id="fileName"></span></div>
+      <p class="rh-hint"><i class="bi bi-info-circle"></i> PDF or DOCX — Max 5 MB</p>
+      <div class="rh-divider"></div>
+      <button type="submit" class="rh-submit-btn"><i class="bi bi-check-circle-fill"></i> Upload & Finish</button>
+    </form>
+  </div>
+  <script>
+    function showFile(input){if(input.files&&input.files[0]){var sf=document.getElementById('selectedFile');var fn=document.getElementById('fileName');fn.textContent=input.files[0].name;sf.style.display='flex';document.getElementById('fileZone').style.borderColor='#2557a7';}}
+  </script>
+</body></html>

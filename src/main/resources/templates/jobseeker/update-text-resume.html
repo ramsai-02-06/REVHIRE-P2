@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Update Resume | RevHire</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--rh-sidebar-bg:#0d1b2a;--rh-sidebar-w:240px;--rh-accent:#2557a7;--rh-accent-light:#eff6ff;--rh-border:#e5e7eb;--rh-gray-bg:#f3f4f6;--rh-text:#111827;--rh-muted:#6b7280;--rh-font:"Inter","Segoe UI",system-ui,sans-serif;--rh-radius:10px;--rh-transition:all .18s ease}
+    *,*::before,*::after{box-sizing:border-box}body{font-family:var(--rh-font);font-size:14px;color:var(--rh-text);background:var(--rh-gray-bg);margin:0}
+    .rh-sidebar{width:var(--rh-sidebar-w);height:100vh;position:fixed;top:0;left:0;background:var(--rh-sidebar-bg);display:flex;flex-direction:column;z-index:1000;box-shadow:4px 0 24px rgba(0,0,0,.18)}
+    .rh-sidebar-brand{display:flex;align-items:center;gap:12px;padding:22px 20px 18px;border-bottom:1px solid rgba(255,255,255,.07);text-decoration:none}
+    .rh-brand-icon{width:38px;height:38px;background:var(--rh-accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;flex-shrink:0}
+    .rh-brand-name{font-size:17px;font-weight:700;color:#fff;line-height:1}.rh-brand-tagline{font-size:10.5px;color:#8a9bb0;letter-spacing:.4px;margin-top:3px;text-transform:uppercase}
+    .rh-sidebar-section-label{font-size:10px;font-weight:600;color:#8a9bb0;text-transform:uppercase;letter-spacing:1.2px;padding:18px 20px 8px}
+    .rh-sidebar-nav{flex:1;overflow-y:auto;padding:4px 0 8px;scrollbar-width:none}.rh-sidebar-nav::-webkit-scrollbar{display:none}
+    .rh-nav-item{padding:3px 12px}.rh-nav-link{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:var(--rh-radius);color:#c8d6e5;text-decoration:none;font-size:14px;font-weight:500;transition:var(--rh-transition);border-left:3px solid transparent}
+    .rh-nav-link:hover{background:rgba(255,255,255,.06);color:#fff;border-left-color:rgba(37,87,167,.5);text-decoration:none}.rh-nav-link.active{background:rgba(37,87,167,.22);color:#fff;border-left-color:var(--rh-accent)}
+    .rh-nav-icon{width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;opacity:.8}.rh-nav-link:hover .rh-nav-icon,.rh-nav-link.active .rh-nav-icon{opacity:1}.rh-nav-label{flex:1;line-height:1}
+    .rh-sidebar-divider{height:1px;background:rgba(255,255,255,.07);margin:10px 16px}.rh-sidebar-footer{padding:14px 12px 18px;border-top:1px solid rgba(255,255,255,.07)}
+    .rh-logout-btn{width:100%;display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:var(--rh-radius);background:transparent;border:1px solid rgba(255,255,255,.10);color:#8a9bb0;font-size:14px;font-weight:500;cursor:pointer;transition:var(--rh-transition);text-align:left;font-family:var(--rh-font)}.rh-logout-btn:hover{background:rgba(220,38,38,.12);border-color:rgba(220,38,38,.35);color:#f87171}
+    .rh-topbar{position:sticky;top:0;z-index:900;height:62px;background:#fff;border-bottom:1px solid var(--rh-border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+    .rh-page-title{font-size:17px;font-weight:650;color:var(--rh-text);margin:0;display:flex;align-items:center;gap:8px}
+    .rh-btn-back{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:8px;background:var(--rh-accent-light);color:var(--rh-accent);border:1px solid #bfdbfe;font-size:13px;font-weight:600;text-decoration:none;transition:var(--rh-transition)}.rh-btn-back:hover{background:var(--rh-accent);color:#fff;text-decoration:none}
+    .main-wrapper{margin-left:var(--rh-sidebar-w);min-height:100vh;display:flex;flex-direction:column}.main-content{padding:28px 28px 48px;flex:1;max-width:calc(var(--rh-sidebar-w) + 900px)}
+    .rh-section-card{background:#fff;border:1px solid var(--rh-border);border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);overflow:hidden;margin-bottom:20px}
+    .rh-sc-header{display:flex;align-items:center;gap:10px;padding:15px 22px 13px;border-bottom:1px solid #f3f4f6}
+    .rh-sc-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+    .si-blue{background:#eff6ff;color:#2557a7}.si-green{background:#f0fdf4;color:#059669}.si-orange{background:#fff7ed;color:#ea580c}.si-purple{background:#faf5ff;color:#7c3aed}.si-teal{background:#f0fdfa;color:#0891b2}
+    .rh-sc-title{font-size:14px;font-weight:700;color:var(--rh-text);margin:0}
+    .rh-sc-body{padding:22px}
+    .rh-label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px}
+    .rh-input,.rh-textarea,.rh-select{width:100%;padding:9px 13px;border:1.5px solid var(--rh-border);border-radius:9px;font-size:13.5px;font-family:var(--rh-font);color:var(--rh-text);background:#fff;outline:none;transition:border-color .15s;appearance:none}
+    .rh-input:focus,.rh-textarea:focus,.rh-select:focus{border-color:var(--rh-accent);box-shadow:0 0 0 3px rgba(37,87,167,.10)}
+    .rh-textarea{resize:vertical;min-height:80px;line-height:1.6}
+    .rh-field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .rh-field-group{margin-bottom:14px}.rh-field-group:last-child{margin-bottom:0}
+    .rh-entry-block{border:1px solid #f0f0f0;border-radius:10px;padding:16px;margin-bottom:12px;background:#fafafa;position:relative}
+    .rh-entry-block:last-child{margin-bottom:0}
+    .rh-entry-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--rh-muted);margin-bottom:12px}
+    .rh-btn-remove-entry{position:absolute;top:10px;right:12px;background:transparent;border:none;color:#dc2626;font-size:12px;cursor:pointer;padding:3px 8px;border-radius:5px;font-family:var(--rh-font);font-weight:600;transition:background .12s;display:flex;align-items:center;gap:4px}.rh-btn-remove-entry:hover{background:#fef2f2}
+    .rh-date-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .rh-date-label{font-size:11px;color:var(--rh-muted);margin-bottom:4px;display:block}
+    .rh-btn-add-entry{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;background:#f0fdf4;color:#059669;border:1px solid #bbf7d0;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--rh-font);transition:background .15s;margin-top:4px}.rh-btn-add-entry:hover{background:#059669;color:#fff;border-color:#059669}
+    .rh-submit-bar{background:#fff;border:1px solid var(--rh-border);border-radius:14px;padding:18px 22px;display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:20px}
+    .rh-btn-submit{display:inline-flex;align-items:center;gap:7px;padding:10px 26px;border-radius:9px;background:var(--rh-accent);color:#fff;border:none;font-size:14px;font-weight:600;font-family:var(--rh-font);cursor:pointer;transition:background .15s}.rh-btn-submit:hover{background:#1a4480}
+    .rh-btn-cancel{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:9px;background:#fff;color:#374151;border:1px solid var(--rh-border);font-size:14px;font-weight:600;text-decoration:none;transition:background .15s}.rh-btn-cancel:hover{background:var(--rh-gray-bg);color:var(--rh-text);text-decoration:none}
+    @media(max-width:991.98px){.main-wrapper{margin-left:0}.rh-field-row,.rh-date-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<aside class="rh-sidebar">
+  <a class="rh-sidebar-brand" th:href="@{/jobseeker/dashboard}"><div class="rh-brand-icon">R</div><div><div class="rh-brand-name">RevHire</div><div class="rh-brand-tagline">Job Seeker Portal</div></div></a>
+  <nav class="rh-sidebar-nav">
+    <div class="rh-sidebar-section-label">Main Menu</div>
+    <div class="rh-nav-item"><a class="rh-nav-link" th:href="@{/jobseeker/dashboard}"><span class="rh-nav-icon"><i class="bi bi-speedometer2"></i></span><span class="rh-nav-label">Dashboard</span></a></div>
+    <div class="rh-nav-item"><a class="rh-nav-link" th:href="@{/jobs/search}"><span class="rh-nav-icon"><i class="bi bi-search"></i></span><span class="rh-nav-label">Search Jobs</span></a></div>
+    <div class="rh-nav-item"><a class="rh-nav-link" th:href="@{/jobseeker/applications}"><span class="rh-nav-icon"><i class="bi bi-briefcase"></i></span><span class="rh-nav-label">My Applications</span></a></div>
+    <div class="rh-nav-item"><a class="rh-nav-link" th:href="@{/jobseeker/saved-jobs}"><span class="rh-nav-icon"><i class="bi bi-bookmark"></i></span><span class="rh-nav-label">Saved Jobs</span></a></div>
+    <div class="rh-nav-item"><a class="rh-nav-link" th:href="@{/jobseeker/notifications}"><span class="rh-nav-icon"><i class="bi bi-bell"></i></span><span class="rh-nav-label">Notifications</span></a></div>
+    <div class="rh-sidebar-divider"></div>
+    <div class="rh-sidebar-section-label">My Profile</div>
+    <div class="rh-nav-item"><a class="rh-nav-link" th:href="@{/jobseeker/profile}"><span class="rh-nav-icon"><i class="bi bi-person-circle"></i></span><span class="rh-nav-label">View Profile</span></a></div>
+    <div class="rh-nav-item"><a class="rh-nav-link" th:href="@{/jobseeker/update-profile}"><span class="rh-nav-icon"><i class="bi bi-pencil-square"></i></span><span class="rh-nav-label">Update Profile</span></a></div>
+    <div class="rh-sidebar-divider"></div>
+    <div class="rh-sidebar-section-label">Resume</div>
+    <div class="rh-nav-item"><a class="rh-nav-link active" th:href="@{/jobseeker/view-text-resume}"><span class="rh-nav-icon"><i class="bi bi-file-text"></i></span><span class="rh-nav-label">View Resume</span></a></div>
+    <div class="rh-nav-item"><a class="rh-nav-link" th:href="@{/jobseeker/upload-resume}"><span class="rh-nav-icon"><i class="bi bi-cloud-upload"></i></span><span class="rh-nav-label">Upload PDF Resume</span></a></div>
+  </nav>
+  <div class="rh-sidebar-footer"><form th:action="@{/logout}" method="post" style="margin:0;"><button type="submit" class="rh-logout-btn"><i class="bi bi-box-arrow-left"></i><span>Logout</span></button></form></div>
+</aside>
+<div class="main-wrapper">
+  <nav class="rh-topbar">
+    <h1 class="rh-page-title"><i class="bi bi-pencil" style="color:#2557a7;font-size:15px;"></i> Update Resume</h1>
+    <a class="rh-btn-back" th:href="@{/jobseeker/dashboard}"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+  </nav>
+  <main class="main-content">
+    <form th:action="@{/jobseeker/update-resume}" th:object="${resume}" method="post">
+      <input type="hidden" th:field="*{id}">
+
+      <!-- Objective -->
+      <div class="rh-section-card">
+        <div class="rh-sc-header"><div class="rh-sc-icon si-blue"><i class="bi bi-quote"></i></div><h3 class="rh-sc-title">Career Objective</h3></div>
+        <div class="rh-sc-body">
+          <textarea class="rh-textarea" th:field="*{objective}" rows="3" placeholder="Describe your career goals..."></textarea>
+        </div>
+      </div>
+
+      <!-- Education -->
+      <div class="rh-section-card">
+        <div class="rh-sc-header"><div class="rh-sc-icon si-green"><i class="bi bi-mortarboard-fill"></i></div><h3 class="rh-sc-title">Education</h3></div>
+        <div class="rh-sc-body">
+          <div id="educationContainer">
+            <div th:each="edu, stat : *{educationList}" class="rh-entry-block">
+              <div class="rh-entry-label">Education Entry</div>
+              <button type="button" class="rh-btn-remove-entry" onclick="this.closest('.rh-entry-block').remove()"><i class="bi bi-trash3"></i> Remove</button>
+              <div class="rh-field-row">
+                <div class="rh-field-group"><label class="rh-label">Degree</label><input class="rh-input" th:name="'educationList['+${stat.index}+'].degree'" th:value="${edu.degree}" placeholder="Degree"></div>
+                <div class="rh-field-group"><label class="rh-label">Institution</label><input class="rh-input" th:name="'educationList['+${stat.index}+'].institution'" th:value="${edu.institution}" placeholder="Institution"></div>
+              </div>
+              <div class="rh-date-row" style="margin-bottom:12px;">
+                <div><span class="rh-date-label">Start Date</span><input type="date" class="rh-input" th:name="'educationList['+${stat.index}+'].startDate'" th:value="${edu.startDate}"></div>
+                <div><span class="rh-date-label">End Date</span><input type="date" class="rh-input" th:name="'educationList['+${stat.index}+'].endDate'" th:value="${edu.endDate}"></div>
+              </div>
+              <div class="rh-field-group"><label class="rh-label">Grade / CGPA</label><input class="rh-input" th:name="'educationList['+${stat.index}+'].grade'" th:value="${edu.grade}" placeholder="e.g. 8.5 CGPA"></div>
+            </div>
+          </div>
+          <button type="button" class="rh-btn-add-entry" onclick="addEdu()"><i class="bi bi-plus-circle"></i> Add Education</button>
+        </div>
+      </div>
+
+      <!-- Experience -->
+      <div class="rh-section-card">
+        <div class="rh-sc-header"><div class="rh-sc-icon si-blue"><i class="bi bi-briefcase-fill"></i></div><h3 class="rh-sc-title">Experience</h3></div>
+        <div class="rh-sc-body">
+          <div id="experienceContainer">
+            <div th:each="exp, stat : *{experienceList}" class="rh-entry-block">
+              <div class="rh-entry-label">Experience Entry</div>
+              <button type="button" class="rh-btn-remove-entry" onclick="this.closest('.rh-entry-block').remove()"><i class="bi bi-trash3"></i> Remove</button>
+              <div class="rh-field-row">
+                <div class="rh-field-group"><label class="rh-label">Company Name</label><input class="rh-input" th:name="'experienceList['+${stat.index}+'].companyName'" th:value="${exp.companyName}" placeholder="Company"></div>
+                <div class="rh-field-group"><label class="rh-label">Job Title</label><input class="rh-input" th:name="'experienceList['+${stat.index}+'].jobTitle'" th:value="${exp.jobTitle}" placeholder="Role"></div>
+              </div>
+              <div class="rh-date-row" style="margin-bottom:12px;">
+                <div><span class="rh-date-label">Start Date</span><input type="date" class="rh-input" th:name="'experienceList['+${stat.index}+'].startDate'" th:value="${exp.startDate}"></div>
+                <div><span class="rh-date-label">End Date</span><input type="date" class="rh-input" th:name="'experienceList['+${stat.index}+'].endDate'" th:value="${exp.endDate}"></div>
+              </div>
+              <div class="rh-field-group"><label class="rh-label">Description</label><textarea class="rh-textarea" rows="2" th:name="'experienceList['+${stat.index}+'].description'" th:text="${exp.description}" placeholder="Responsibilities..."></textarea></div>
+            </div>
+          </div>
+          <button type="button" class="rh-btn-add-entry" onclick="addExp()"><i class="bi bi-plus-circle"></i> Add Experience</button>
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="rh-section-card">
+        <div class="rh-sc-header"><div class="rh-sc-icon si-teal"><i class="bi bi-tools"></i></div><h3 class="rh-sc-title">Skills</h3></div>
+        <div class="rh-sc-body">
+          <div id="skillsContainer">
+            <div th:each="skill, stat : *{skillsList}" class="rh-entry-block">
+              <button type="button" class="rh-btn-remove-entry" onclick="this.closest('.rh-entry-block').remove()"><i class="bi bi-trash3"></i> Remove</button>
+              <div class="rh-field-row">
+                <div class="rh-field-group"><label class="rh-label">Skill Name</label><input class="rh-input" th:name="'skillsList['+${stat.index}+'].skillName'" th:value="${skill.skillName}" placeholder="e.g. Java"></div>
+                <div class="rh-field-group"><label class="rh-label">Proficiency</label>
+                  <select class="rh-select" th:name="'skillsList['+${stat.index}+'].proficiencyLevel'">
+                    <option value="BEGINNER">Beginner</option><option value="INTERMEDIATE">Intermediate</option><option value="ADVANCED">Advanced</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="rh-btn-add-entry" onclick="addSkill()"><i class="bi bi-plus-circle"></i> Add Skill</button>
+        </div>
+      </div>
+
+      <!-- Certifications -->
+      <div class="rh-section-card">
+        <div class="rh-sc-header"><div class="rh-sc-icon si-orange"><i class="bi bi-patch-check-fill"></i></div><h3 class="rh-sc-title">Certifications</h3></div>
+        <div class="rh-sc-body">
+          <div id="certContainer">
+            <div th:each="cert, stat : *{certificationsList}" class="rh-entry-block">
+              <button type="button" class="rh-btn-remove-entry" onclick="this.closest('.rh-entry-block').remove()"><i class="bi bi-trash3"></i> Remove</button>
+              <div class="rh-field-row">
+                <div class="rh-field-group"><label class="rh-label">Certification Name</label><input class="rh-input" th:name="'certificationsList['+${stat.index}+'].name'" th:value="${cert.name}" placeholder="Certification"></div>
+                <div class="rh-field-group"><label class="rh-label">Issued By</label><input class="rh-input" th:name="'certificationsList['+${stat.index}+'].issuedBy'" th:value="${cert.issuedBy}" placeholder="Issuing body"></div>
+              </div>
+              <div class="rh-field-group"><label class="rh-label">Issue Date</label><input type="date" class="rh-input" th:name="'certificationsList['+${stat.index}+'].issueDate'" th:value="${cert.issueDate}"></div>
+            </div>
+          </div>
+          <button type="button" class="rh-btn-add-entry" onclick="addCert()"><i class="bi bi-plus-circle"></i> Add Certification</button>
+        </div>
+      </div>
+
+      <!-- Projects -->
+      <div class="rh-section-card">
+        <div class="rh-sc-header"><div class="rh-sc-icon si-purple"><i class="bi bi-code-slash"></i></div><h3 class="rh-sc-title">Projects</h3></div>
+        <div class="rh-sc-body">
+          <div id="projectContainer">
+            <div th:each="proj, stat : *{projectsList}" class="rh-entry-block">
+              <button type="button" class="rh-btn-remove-entry" onclick="this.closest('.rh-entry-block').remove()"><i class="bi bi-trash3"></i> Remove</button>
+              <div class="rh-field-row">
+                <div class="rh-field-group"><label class="rh-label">Project Name</label><input class="rh-input" th:name="'projectsList['+${stat.index}+'].name'" th:value="${proj.name}" placeholder="Project name"></div>
+                <div class="rh-field-group"><label class="rh-label">Technologies Used</label><input class="rh-input" th:name="'projectsList['+${stat.index}+'].technologiesUsed'" th:value="${proj.technologiesUsed}" placeholder="Java, Spring, MySQL..."></div>
+              </div>
+              <div class="rh-field-group"><label class="rh-label">Description</label><textarea class="rh-textarea" rows="2" th:name="'projectsList['+${stat.index}+'].description'" th:text="${proj.description}" placeholder="What did you build?"></textarea></div>
+            </div>
+          </div>
+          <button type="button" class="rh-btn-add-entry" onclick="addProj()"><i class="bi bi-plus-circle"></i> Add Project</button>
+        </div>
+      </div>
+
+      <div class="rh-submit-bar">
+        <a class="rh-btn-cancel" th:href="@{/jobseeker/dashboard}"><i class="bi bi-x"></i> Cancel</a>
+        <button type="submit" class="rh-btn-submit"><i class="bi bi-check-circle"></i> Update Resume</button>
+      </div>
+    </form>
+  </main>
+</div>
+<script>
+var ei=document.querySelectorAll('#educationContainer .rh-entry-block').length;
+var xi=document.querySelectorAll('#experienceContainer .rh-entry-block').length;
+var si=document.querySelectorAll('#skillsContainer .rh-entry-block').length;
+var ci=document.querySelectorAll('#certContainer .rh-entry-block').length;
+var pi=document.querySelectorAll('#projectContainer .rh-entry-block').length;
+
+function addEdu(){document.getElementById('educationContainer').insertAdjacentHTML('beforeend',`<div class="rh-entry-block"><div class="rh-entry-label">Education Entry</div><button type="button" class="rh-btn-remove-entry" onclick="this.closest('.rh-entry-block').remove()"><i class="bi bi-trash3"></i> Remove</button><div class="rh-field-row"><div class="rh-field-group"><label class="rh-label">Degree</label><input class="rh-input" name="educationList[${ei}].degree" placeholder="Degree"></div><div class="rh-field-group"><label class="rh-label">Institution</label><input class="rh-input" name="educationList[${ei}].institution" placeholder="Institution"></div></div><div class="rh-date-row" style="margin-bottom:12px;"><div><span class="rh-date-label">Start Date</span><input type="date" class="rh-input" name="educationList[${ei}].startDate"></div><div><span class="rh-date-label">End Date</span><input type="date" class="rh-input" name="educationList[${ei}].endDate"></div></div><div class="rh-field-group"><label class="rh-label">Grade / CGPA</label><input class="rh-input" name="educationList[${ei}].grade" placeholder="e.g. 8.5 CGPA"></div></div>`);ei++;}
+function addExp(){document.getElementById('experienceContainer').insertAdjacentHTML('beforeend',`<div class="rh-entry-block"><div class="rh-entry-label">Experience Entry</div><button type="button" class="rh-btn-remove-entry" onclick="this.closest('.rh-entry-block').remove()"><i class="bi bi-trash3"></i> Remove</button><div class="rh-field-row"><div class="rh-field-group"><label class="rh-label">Company Name</label><input class="rh-input" name="experienceList[${xi}].companyName" placeholder="Company"></div><div class="rh-field-group"><label class="rh-label">Job Title</label><input class="rh-input" name="experienceList[${xi}].jobTitle" placeholder="Role"></div></div><div class="rh-date-row" style="margin-bottom:12px;"><div><span class="rh-date-label">Start Date</span><input type="date" class="rh-input" name="experienceList[${xi}].startDate"></div><div><span class="rh-date-label">End Date</span><input type="date" class="rh-input" name="experienceList[${xi}].endDate"></div></div><div class="rh-field-group"><label class="rh-label">Description</label><textarea class="rh-textarea" rows="2" name="experienceList[${xi}].description" placeholder="Responsibilities..."></textarea></div></div>`);xi++;}
+function addSkill(){document.getElementById('skillsContainer').insertAdjacentHTML('beforeend',`<div class="rh-entry-block"><button type="button" class="rh-btn-remove-entry" onclick="this.closest('.rh-entry-block').remove()"><i class="bi bi-trash3"></i> Remove</button><div class="rh-field-row"><div class="rh-field-group"><label class="rh-label">Skill Name</label><input class="rh-input" name="skillsList[${si}].skillName" placeholder="e.g. Java"></div><div class="rh-field-group"><label class="rh-label">Proficiency</label><select class="rh-select" name="skillsList[${si}].proficiencyLevel"><option value="BEGINNER">Beginner</option><option value="INTERMEDIATE">Intermediate</option><option value="ADVANCED">Advanced</option></select></div></div></div>`);si++;}
+function addCert(){document.getElementById('certContainer').insertAdjacentHTML('beforeend',`<div class="rh-entry-block"><button type="button" class="rh-btn-remove-entry" onclick="this.closest('.rh-entry-block').remove()"><i class="bi bi-trash3"></i> Remove</button><div class="rh-field-row"><div class="rh-field-group"><label class="rh-label">Certification Name</label><input class="rh-input" name="certificationsList[${ci}].name" placeholder="Certification"></div><div class="rh-field-group"><label class="rh-label">Issued By</label><input class="rh-input" name="certificationsList[${ci}].issuedBy" placeholder="Issuing body"></div></div><div class="rh-field-group"><label class="rh-label">Issue Date</label><input type="date" class="rh-input" name="certificationsList[${ci}].issueDate"></div></div>`);ci++;}
+function addProj(){document.getElementById('projectContainer').insertAdjacentHTML('beforeend',`<div class="rh-entry-block"><button type="button" class="rh-btn-remove-entry" onclick="this.closest('.rh-entry-block').remove()"><i class="bi bi-trash3"></i> Remove</button><div class="rh-field-row"><div class="rh-field-group"><label class="rh-label">Project Name</label><input class="rh-input" name="projectsList[${pi}].name" placeholder="Project name"></div><div class="rh-field-group"><label class="rh-label">Technologies Used</label><input class="rh-input" name="projectsList[${pi}].technologiesUsed" placeholder="Java, Spring..."></div></div><div class="rh-field-group"><label class="rh-label">Description</label><textarea class="rh-textarea" rows="2" name="projectsList[${pi}].description" placeholder="What did you build?"></textarea></div></div>`);pi++;}
+</script>
+</body></html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- ============================================================
+     RevHire | employer-profile.html
+     ============================================================
+     ✅ ALL Thymeleaf preserved:
+       • th:replace sidebar + navbar
+       • th:action="@{/employer/update}" method="post"
+       • th:object="${employer}"
+       • th:field="*{id}" *{companyName} *{industry}
+       • th:field="*{companySize}" *{website} *{location} *{description}"
+       • th:href="@{/employer/dashboard}"
+     ============================================================ -->
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Company Profile | RevHire</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { background: #f3f4f6; font-family: 'Inter', system-ui, sans-serif; font-size: 14px; color: #111827; margin: 0; }
+    .main-wrapper { margin-left: 240px; min-height: 100vh; display: flex; flex-direction: column; }
+    .main-content { padding: 28px 32px 48px; flex: 1; }
+
+    /* Page header */
+    .rh-page-header { margin-bottom: 24px; }
+    .rh-page-header h2 { font-size: 22px; font-weight: 700; color: #111827; margin: 0 0 4px; display: flex; align-items: center; gap: 10px; }
+    .rh-page-header h2 i { width: 38px; height: 38px; background: #eff6ff; color: #2557a7; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .rh-page-header p { font-size: 13.5px; color: #6b7280; margin: 0 0 0 48px; }
+
+    /* Layout */
+    .rh-layout { display: grid; grid-template-columns: 1fr 290px; gap: 22px; align-items: start; max-width: 1000px; }
+
+    /* Card */
+    .rh-card { background: #fff; border-radius: 14px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden; margin-bottom: 20px; }
+    .rh-card:last-child { margin-bottom: 0; }
+    .rh-card-header { display: flex; align-items: center; gap: 10px; padding: 15px 22px 13px; border-bottom: 1px solid #f3f4f6; }
+    .rh-card-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+    .ci-blue { background: #eff6ff; color: #2557a7; }
+    .ci-green { background: #f0fdf4; color: #059669; }
+    .rh-card-title { font-size: 14px; font-weight: 700; color: #111827; margin: 0; }
+    .rh-card-body { padding: 22px; }
+
+    /* Fields */
+    .rh-field { margin-bottom: 18px; }
+    .rh-field:last-child { margin-bottom: 0; }
+    .rh-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .rh-label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    .rh-input, .rh-select, .rh-textarea { width: 100%; padding: 9px 13px; font-size: 13.5px; font-family: inherit; color: #111827; background: #fff; border: 1.5px solid #e5e7eb; border-radius: 9px; transition: border-color .18s, box-shadow .18s; outline: none; appearance: none; -webkit-appearance: none; }
+    .rh-input:focus, .rh-select:focus, .rh-textarea:focus { border-color: #2557a7; box-shadow: 0 0 0 3px rgba(37,87,167,.10); }
+    .rh-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+    .rh-input-group { position: relative; }
+    .rh-input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 14px; pointer-events: none; }
+    .rh-input-group .rh-input { padding-left: 34px; }
+    .rh-select-wrap { position: relative; }
+    .rh-select-wrap::after { content: '\F282'; font-family: 'bootstrap-icons'; position: absolute; right: 13px; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 14px; pointer-events: none; }
+    .rh-select { padding-right: 36px; cursor: pointer; }
+
+    /* Submit bar */
+    .rh-submit-wrap { display: flex; align-items: center; justify-content: space-between; gap: 14px; background: #fff; border-radius: 14px; border: 1px solid #e5e7eb; padding: 18px 22px; }
+    .rh-btns { display: flex; gap: 10px; flex-shrink: 0; }
+    .rh-btn-save { display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; background: #2557a7; color: #fff; border: none; border-radius: 9px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .18s; }
+    .rh-btn-save:hover { background: #1a4480; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(37,87,167,.28); }
+    .rh-btn-back { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #f9fafb; color: #374151; border: 1.5px solid #e5e7eb; border-radius: 9px; font-size: 14px; font-weight: 600; text-decoration: none; transition: all .18s; }
+    .rh-btn-back:hover { background: #f3f4f6; color: #111827; text-decoration: none; }
+
+    /* Side info card */
+    .rh-info-card { background: linear-gradient(135deg,#1a4480,#2557a7); border-radius: 14px; padding: 24px; color: #fff; margin-bottom: 18px; }
+    .rh-info-card h4 { font-size: 15px; font-weight: 700; margin: 0 0 6px; }
+    .rh-info-card p { font-size: 13px; color: rgba(255,255,255,.75); margin: 0; line-height: 1.5; }
+    .rh-tip-list { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-direction: column; gap: 9px; }
+    .rh-tip-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; color: rgba(255,255,255,.85); line-height: 1.4; }
+    .rh-tip-list li i { font-size: 13px; margin-top: 1px; flex-shrink: 0; color: #93c5fd; }
+
+    @media (max-width: 900px) { .rh-layout { grid-template-columns: 1fr; } }
+    @media (max-width: 991.98px) { .main-wrapper { margin-left: 0; } .main-content { padding: 20px 16px; } }
+    @media (max-width: 576px) { .rh-field-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="main-wrapper">
+  <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+  <main class="main-content">
+
+    <div class="rh-page-header">
+      <h2><i class="bi bi-building-fill"></i> Company Profile</h2>
+      <p>Keep your company information up to date to attract the best candidates.</p>
+    </div>
+
+    <div class="rh-layout">
+
+      <!-- LEFT — form -->
+      <div>
+        <!-- BACKEND SAFE: th:action, th:object, method preserved exactly -->
+        <form th:action="@{/employer/update}" method="post" th:object="${employer}">
+
+          <!-- Hidden id field — BACKEND SAFE: th:field="*{id}" preserved -->
+          <input type="hidden" th:field="*{id}"/>
+
+          <!-- Company Details -->
+          <div class="rh-card">
+            <div class="rh-card-header">
+              <div class="rh-card-icon ci-blue"><i class="bi bi-building"></i></div>
+              <h3 class="rh-card-title">Company Details</h3>
+            </div>
+            <div class="rh-card-body">
+
+              <div class="rh-field-row">
+                <div class="rh-field">
+                  <label class="rh-label">Company Name</label>
+                  <!-- BACKEND SAFE: th:field="*{companyName}" preserved -->
+                  <input type="text" class="rh-input" th:field="*{companyName}" placeholder="e.g. Acme Corp" required>
+                </div>
+                <div class="rh-field">
+                  <label class="rh-label">Industry</label>
+                  <!-- BACKEND SAFE: th:field="*{industry}" preserved -->
+                  <input type="text" class="rh-input" th:field="*{industry}" placeholder="e.g. IT Services" required>
+                </div>
+              </div>
+
+              <div class="rh-field-row">
+                <div class="rh-field">
+                  <label class="rh-label">Company Size</label>
+                  <!-- BACKEND SAFE: th:field="*{companySize}" preserved -->
+                  <div class="rh-select-wrap">
+                    <select class="rh-select" th:field="*{companySize}">
+                      <option value="1-10">1–10 Employees</option>
+                      <option value="10-50">10–50 Employees</option>
+                      <option value="50-200">50–200 Employees</option>
+                      <option value="200-1000">200–1000 Employees</option>
+                      <option value="1000+">1000+ Employees</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="rh-field">
+                  <label class="rh-label">Location</label>
+                  <!-- BACKEND SAFE: th:field="*{location}" preserved -->
+                  <div class="rh-input-group">
+                    <i class="bi bi-geo-alt rh-input-icon"></i>
+                    <input type="text" class="rh-input" th:field="*{location}" placeholder="e.g. Chennai, India" required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rh-field">
+                <label class="rh-label">Website</label>
+                <!-- BACKEND SAFE: th:field="*{website}" preserved -->
+                <div class="rh-input-group">
+                  <i class="bi bi-globe rh-input-icon"></i>
+                  <input type="text" class="rh-input" th:field="*{website}" placeholder="https://yourcompany.com">
+                </div>
+              </div>
+
+              <div class="rh-field">
+                <label class="rh-label">Company Description</label>
+                <!-- BACKEND SAFE: th:field="*{description}" preserved -->
+                <textarea class="rh-textarea" rows="4" th:field="*{description}" placeholder="Tell candidates what makes your company a great place to work..."></textarea>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Submit bar -->
+          <div class="rh-submit-wrap">
+            <span style="font-size:13px;color:#6b7280;display:flex;align-items:center;gap:7px;">
+              <i class="bi bi-shield-check" style="color:#059669;"></i>
+              Your profile is visible to all job seekers on RevHire.
+            </span>
+            <div class="rh-btns">
+              <!-- BACKEND SAFE: th:href="@{/employer/dashboard}" preserved -->
+              <a th:href="@{/employer/dashboard}" class="rh-btn-back">
+                <i class="bi bi-arrow-left"></i> Back
+              </a>
+              <button type="submit" class="rh-btn-save">
+                <i class="bi bi-save-fill"></i> Update Profile
+              </button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- RIGHT — info -->
+      <div>
+        <div class="rh-info-card">
+          <h4><i class="bi bi-building me-2"></i>Your Company Page</h4>
+          <p>A complete profile helps candidates trust your brand and apply with confidence.</p>
+          <ul class="rh-tip-list">
+            <li><i class="bi bi-check-circle-fill"></i> Add your website so candidates can research you.</li>
+            <li><i class="bi bi-check-circle-fill"></i> Accurate company size sets expectations early.</li>
+            <li><i class="bi bi-check-circle-fill"></i> A good description improves application quality.</li>
+            <li><i class="bi bi-check-circle-fill"></i> Keep location current — it affects job search results.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

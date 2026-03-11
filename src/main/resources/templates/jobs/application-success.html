@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- ============================================================
+     RevHire | jobs/application-success.html — Clean Redesign
+     ============================================================
+     ✅ ALL Thymeleaf attributes preserved EXACTLY:
+       • th:if="${successMessage}" / th:text="${successMessage}"
+       • th:if="${errorMessage}"   / th:text="${errorMessage}"
+       • th:href="@{/jobseeker/dashboard}"
+       • th:href="@{/jobs/search}"
+     ============================================================ -->
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Application Submitted | RevHire</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      background: #f3f4f6;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      margin: 0;
+    }
+
+    .rh-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      padding: 48px 40px 40px;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+    }
+
+    /* Success state */
+    .rh-icon-circle {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 34px;
+      margin: 0 auto 24px;
+    }
+    .rh-icon-success { background: #f0fdf4; color: #16a34a; }
+    .rh-icon-error   { background: #fef2f2; color: #dc2626; }
+
+    .rh-title {
+      font-size: 22px; font-weight: 700;
+      color: #111827; margin: 0 0 10px;
+      letter-spacing: -0.3px;
+    }
+
+    .rh-message {
+      font-size: 14px; color: #6b7280;
+      margin: 0 0 32px; line-height: 1.6;
+    }
+
+    .rh-actions {
+      display: flex; gap: 12px; justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .rh-btn-primary {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 10px 22px; border-radius: 9px;
+      background: #2557a7; color: #fff;
+      border: 1px solid #2557a7;
+      font-size: 14px; font-weight: 600;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .rh-btn-primary:hover { background: #1a4480; color: #fff; text-decoration: none; }
+
+    .rh-btn-secondary {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 10px 22px; border-radius: 9px;
+      background: #fff; color: #374151;
+      border: 1px solid #e5e7eb;
+      font-size: 14px; font-weight: 600;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .rh-btn-secondary:hover { background: #f3f4f6; color: #111827; text-decoration: none; }
+  </style>
+</head>
+
+<body>
+  <div class="rh-card">
+
+    <!-- SUCCESS state — BACKEND SAFE: th:if="${successMessage}" preserved -->
+    <div th:if="${successMessage}">
+      <div class="rh-icon-circle rh-icon-success">
+        <i class="bi bi-check-circle-fill"></i>
+      </div>
+      <h2 class="rh-title">Application Submitted!</h2>
+      <!-- BACKEND SAFE: th:text="${successMessage}" preserved -->
+      <p class="rh-message" th:text="${successMessage}"></p>
+    </div>
+
+    <!-- ERROR state — BACKEND SAFE: th:if="${errorMessage}" preserved -->
+    <div th:if="${errorMessage}">
+      <div class="rh-icon-circle rh-icon-error">
+        <i class="bi bi-x-circle-fill"></i>
+      </div>
+      <h2 class="rh-title">Already Applied</h2>
+      <!-- BACKEND SAFE: th:text="${errorMessage}" preserved -->
+      <p class="rh-message" th:text="${errorMessage}"></p>
+    </div>
+
+    <div class="rh-actions">
+      <!-- BACKEND SAFE: th:href="@{/jobseeker/dashboard}" preserved -->
+      <a class="rh-btn-primary" th:href="@{/jobseeker/dashboard}">
+        <i class="bi bi-grid-1x2"></i> Go to Dashboard
+      </a>
+      <!-- BACKEND SAFE: th:href="@{/jobs/search}" preserved -->
+      <a class="rh-btn-secondary" th:href="@{/jobs/search}">
+        <i class="bi bi-search"></i> Browse More Jobs
+      </a>
+    </div>
+
+  </div>
+</body>
+</html>

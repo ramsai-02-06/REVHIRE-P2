@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Saved Jobs | RevHire</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--rh-sidebar-bg:#0d1b2a;--rh-sidebar-w:240px;--rh-accent:#2557a7;--rh-accent-light:#eff6ff;--rh-border:#e5e7eb;--rh-gray-bg:#f3f4f6;--rh-text:#111827;--rh-muted:#6b7280;--rh-font:"Inter","Segoe UI",system-ui,sans-serif;--rh-radius:10px;--rh-transition:all .18s ease}
+    *,*::before,*::after{box-sizing:border-box}body{font-family:var(--rh-font);font-size:14px;color:var(--rh-text);background:var(--rh-gray-bg);margin:0}
+    .rh-sidebar{width:var(--rh-sidebar-w);height:100vh;position:fixed;top:0;left:0;background:var(--rh-sidebar-bg);display:flex;flex-direction:column;z-index:1000;box-shadow:4px 0 24px rgba(0,0,0,.18)}
+    .rh-sidebar-brand{display:flex;align-items:center;gap:12px;padding:22px 20px 18px;border-bottom:1px solid rgba(255,255,255,.07);text-decoration:none}
+    .rh-brand-icon{width:38px;height:38px;background:var(--rh-accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;box-shadow:0 4px 12px rgba(37,87,167,.45);flex-shrink:0}
+    .rh-brand-name{font-size:17px;font-weight:700;color:#fff;line-height:1}.rh-brand-tagline{font-size:10.5px;color:#8a9bb0;letter-spacing:.4px;margin-top:3px;text-transform:uppercase}
+    .rh-sidebar-section-label{font-size:10px;font-weight:600;color:#8a9bb0;text-transform:uppercase;letter-spacing:1.2px;padding:18px 20px 8px}
+    .rh-sidebar-nav{flex:1;overflow-y:auto;padding:4px 0 8px;scrollbar-width:none}.rh-sidebar-nav::-webkit-scrollbar{display:none}
+    .rh-nav-item{padding:3px 12px}.rh-nav-link{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:var(--rh-radius);color:#c8d6e5;text-decoration:none;font-size:14px;font-weight:500;transition:var(--rh-transition);border-left:3px solid transparent}
+    .rh-nav-link:hover{background:rgba(255,255,255,.06);color:#fff;border-left-color:rgba(37,87,167,.5);text-decoration:none}.rh-nav-link.active{background:rgba(37,87,167,.22);color:#fff;border-left-color:var(--rh-accent)}
+    .rh-nav-icon{width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;opacity:.8}.rh-nav-link:hover .rh-nav-icon,.rh-nav-link.active .rh-nav-icon{opacity:1}.rh-nav-label{flex:1;line-height:1}
+    .rh-sidebar-divider{height:1px;background:rgba(255,255,255,.07);margin:10px 16px}.rh-sidebar-footer{padding:14px 12px 18px;border-top:1px solid rgba(255,255,255,.07)}
+    .rh-logout-btn{width:100%;display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:var(--rh-radius);background:transparent;border:1px solid rgba(255,255,255,.10);color:#8a9bb0;font-size:14px;font-weight:500;cursor:pointer;transition:var(--rh-transition);text-align:left;font-family:var(--rh-font)}.rh-logout-btn:hover{background:rgba(220,38,38,.12);border-color:rgba(220,38,38,.35);color:#f87171}
+    .rh-topbar{position:sticky;top:0;z-index:900;height:62px;background:#fff;border-bottom:1px solid var(--rh-border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+    .rh-page-title{font-size:17px;font-weight:650;color:var(--rh-text);letter-spacing:-.2px;margin:0;display:flex;align-items:center;gap:8px}
+    .rh-btn-back{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:8px;background:var(--rh-accent-light);color:var(--rh-accent);border:1px solid #bfdbfe;font-size:13px;font-weight:600;text-decoration:none;transition:var(--rh-transition)}.rh-btn-back:hover{background:var(--rh-accent);color:#fff;text-decoration:none}
+    .main-wrapper{margin-left:var(--rh-sidebar-w);min-height:100vh;display:flex;flex-direction:column}.main-content{padding:28px 28px 48px;flex:1}
+    .rh-table-card{background:#fff;border:1px solid var(--rh-border);border-radius:14px;box-shadow:0 1px 4px rgba(0,0,0,.04);overflow:hidden}
+    .rh-table-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--rh-border)}
+    .rh-table-title{font-size:15px;font-weight:700;color:var(--rh-text);display:flex;align-items:center;gap:8px;margin:0}
+    .rh-count-pill{background:var(--rh-accent-light);color:var(--rh-accent);border:1px solid #bfdbfe;border-radius:20px;font-size:12px;font-weight:700;padding:2px 10px}
+    .rh-table{width:100%;border-collapse:collapse}.rh-table thead th{background:#f9fafb;padding:12px 18px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--rh-muted);border-bottom:1px solid var(--rh-border);white-space:nowrap}
+    .rh-table tbody tr{border-bottom:1px solid #f3f4f6;transition:background .12s}.rh-table tbody tr:last-child{border-bottom:none}.rh-table tbody tr:hover{background:#fafafa}
+    .rh-table td{padding:14px 18px;font-size:14px;color:var(--rh-text);vertical-align:middle}
+    .rh-job-title{font-weight:600}.rh-muted-cell{color:var(--rh-muted)}
+    .rh-type-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:6px;font-size:11.5px;font-weight:600}
+    .rh-badge-fulltime{background:#eff6ff;color:#2557a7}.rh-badge-parttime{background:#f0fdf4;color:#059669}.rh-badge-contract{background:#fff7ed;color:#ea580c}.rh-badge-internship{background:#faf5ff;color:#7c3aed}.rh-badge-default{background:#f3f4f6;color:#374151}
+    .rh-action-wrap{display:flex;gap:8px;align-items:center}
+    .rh-btn-apply{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:7px;background:var(--rh-accent);color:#fff;border:none;font-size:12.5px;font-weight:600;text-decoration:none;transition:background .15s}.rh-btn-apply:hover{background:#1a4480;color:#fff;text-decoration:none}
+    .rh-btn-remove{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;background:#fff;color:#dc2626;border:1px solid #fecaca;font-size:12.5px;font-weight:600;cursor:pointer;transition:var(--rh-transition);font-family:var(--rh-font)}.rh-btn-remove:hover{background:#fef2f2;border-color:#dc2626}
+    .rh-empty{text-align:center;padding:64px 20px}.rh-empty i{font-size:44px;color:#d1d5db;display:block;margin-bottom:16px}.rh-empty h5{font-size:16px;font-weight:700;margin-bottom:8px}.rh-empty p{font-size:14px;color:var(--rh-muted);margin:0}
+    @media(max-width:991.98px){.main-wrapper{margin-left:0}}
+  </style>
+</head>
+<body>
+<aside class="rh-sidebar">
+  <a class="rh-sidebar-brand" th:href="@{/jobseeker/dashboard}"><div class="rh-brand-icon">R</div><div><div class="rh-brand-name">RevHire</div><div class="rh-brand-tagline">Job Seeker Portal</div></div></a>
+  <nav class="rh-sidebar-nav">
+    <div class="rh-sidebar-section-label">Main Menu</div>
+    <div class="rh-nav-item"><a class="rh-nav-link" th:href="@{/jobseeker/dashboard}"><span class="rh-nav-icon"><i class="bi bi-speedometer2"></i></span><span class="rh-nav-label">Dashboard</span></a></div>
+    <div class="rh-nav-item"><a class="rh-nav-link" th:href="@{/jobs/search}"><span class="rh-nav-icon"><i class="bi bi-search"></i></span><span class="rh-nav-label">Search Jobs</span></a></div>
+    <div class="rh-nav-item"><a class="rh-nav-link" th:href="@{/jobseeker/applications}"><span class="rh-nav-icon"><i class="bi bi-briefcase"></i></span><span class="rh-nav-label">My Applications</span></a></div>
+    <div class="rh-nav-item"><a class="rh-nav-link active" th:href="@{/jobseeker/saved-jobs}"><span class="rh-nav-icon"><i class="bi bi-bookmark"></i></span><span class="rh-nav-label">Saved Jobs</span></a></div>
+    <div class="rh-nav-item"><a class="rh-nav-link" th:href="@{/jobseeker/notifications}"><span class="rh-nav-icon"><i class="bi bi-bell"></i></span><span class="rh-nav-label">Notifications</span></a></div>
+    <div class="rh-sidebar-divider"></div>
+    <div class="rh-sidebar-section-label">My Profile</div>
+    <div class="rh-nav-item"><a class="rh-nav-link" th:href="@{/jobseeker/profile}"><span class="rh-nav-icon"><i class="bi bi-person-circle"></i></span><span class="rh-nav-label">View Profile</span></a></div>
+    <div class="rh-nav-item"><a class="rh-nav-link" th:href="@{/jobseeker/update-profile}"><span class="rh-nav-icon"><i class="bi bi-pencil-square"></i></span><span class="rh-nav-label">Update Profile</span></a></div>
+    <div class="rh-sidebar-divider"></div>
+    <div class="rh-sidebar-section-label">Resume</div>
+    <div class="rh-nav-item"><a class="rh-nav-link" th:href="@{/jobseeker/view-text-resume}"><span class="rh-nav-icon"><i class="bi bi-file-text"></i></span><span class="rh-nav-label">View Resume</span></a></div>
+    <div class="rh-nav-item"><a class="rh-nav-link" th:href="@{/jobseeker/upload-resume}"><span class="rh-nav-icon"><i class="bi bi-cloud-upload"></i></span><span class="rh-nav-label">Upload PDF Resume</span></a></div>
+  </nav>
+  <div class="rh-sidebar-footer"><form th:action="@{/logout}" method="post" style="margin:0;"><button type="submit" class="rh-logout-btn"><i class="bi bi-box-arrow-left"></i><span>Logout</span></button></form></div>
+</aside>
+<div class="main-wrapper">
+  <nav class="rh-topbar">
+    <h1 class="rh-page-title"><i class="bi bi-bookmark-fill" style="color:#2557a7;font-size:15px;"></i> Saved Jobs</h1>
+    <a class="rh-btn-back" th:href="@{/jobseeker/dashboard}"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+  </nav>
+  <main class="main-content">
+    <div class="rh-table-card">
+      <div class="rh-table-header">
+        <h2 class="rh-table-title"><i class="bi bi-bookmark-fill" style="color:#2557a7;"></i> Saved Jobs</h2>
+        <span class="rh-count-pill" th:text="${#lists.size(savedJobs)} + ' saved'">0 saved</span>
+      </div>
+      <table class="rh-table">
+        <thead><tr><th>Job Title</th><th>Company</th><th>Location</th><th>Experience</th><th>Openings</th><th>Job Type</th><th>Salary</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr th:each="saved : ${savedJobs}">
+            <td class="rh-job-title" th:text="${saved.job.title}"></td>
+            <td class="rh-muted-cell" th:text="${saved.job.companyName}"></td>
+            <td th:text="${saved.job.location}"></td>
+            <td th:text="${saved.job.experienceRequired}"></td>
+            <td th:text="${saved.job.openings}"></td>
+            <td><span class="rh-type-badge rh-badge-default js-type-badge" th:text="${saved.job.jobType}"></span></td>
+            <td><span th:text="${saved.job.salaryMin}"></span> - <span th:text="${saved.job.salaryMax}"></span></td>
+            <td>
+              <div class="rh-action-wrap">
+                <a class="rh-btn-apply" th:href="@{/jobs/apply-form/{id}(id=${saved.job.id})}"><i class="bi bi-send"></i> Apply</a>
+                <form th:action="@{/jobseeker/remove-saved-job/{id}(id=${saved.job.id})}" method="post" style="margin:0;">
+                  <button type="submit" class="rh-btn-remove"><i class="bi bi-trash3"></i> Remove</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(savedJobs)}"><td colspan="8"><div class="rh-empty"><i class="bi bi-bookmark"></i><h5>No saved jobs yet</h5><p>Browse jobs and save ones you're interested in.</p></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<script>
+  document.querySelectorAll('.js-type-badge').forEach(function(b){var t=(b.textContent||'').toLowerCase();b.classList.remove('rh-badge-default');if(t.includes('full'))b.classList.add('rh-badge-fulltime');else if(t.includes('part'))b.classList.add('rh-badge-parttime');else if(t.includes('contract'))b.classList.add('rh-badge-contract');else if(t.includes('intern'))b.classList.add('rh-badge-internship');else b.classList.add('rh-badge-default');});
+</script>
+</body></html>

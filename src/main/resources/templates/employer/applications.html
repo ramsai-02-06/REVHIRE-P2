@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<!-- ============================================================
+     RevHire | employer/applications.html  (UPDATED for final zip)
+     ============================================================
+     ✅ Changes from final zip:
+       1. Resume section: th:if="${app.resume != null}" / th:if="${app.resumeFile != null}"
+          / th:if="${app.resume == null and app.resumeFile == null}" (all conditional)
+       2. PDF URL changed: /api/resume-files/view/{id}  (was /files/resume/{id})
+       3. New WITHDRAWN status badge: th:if="${app.status=='WITHDRAWN'}"
+       4. Action buttons now wrapped in: th:if="${app.status.equals('APPLIED')}"
+          with "No Action" fallback: th:if="${!app.status.equals('APPLIED')}"
+       5. Back to Dashboard button added
+     ✅ All other th:* preserved exactly.
+     ============================================================ -->
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Applicants | RevHire</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { background: #f3f4f6; font-family: 'Inter', system-ui, sans-serif; font-size: 14px; color: #111827; margin: 0; }
+    .main-wrapper { margin-left: 240px; min-height: 100vh; display: flex; flex-direction: column; }
+    .main-content { padding: 28px 32px 48px; flex: 1; }
+
+    .rh-page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 24px; }
+    .rh-page-header h2 { font-size: 22px; font-weight: 700; color: #111827; margin: 0 0 4px; display: flex; align-items: center; gap: 10px; }
+    .rh-page-header h2 i { width: 38px; height: 38px; background: #eff6ff; color: #2557a7; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .rh-page-header p { font-size: 13.5px; color: #6b7280; margin: 0 0 0 48px; }
+    .rh-btn-back { display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; background: #f9fafb; color: #374151; border: 1.5px solid #e5e7eb; border-radius: 9px; font-size: 13px; font-weight: 600; text-decoration: none; transition: all .18s; white-space: nowrap; }
+    .rh-btn-back:hover { background: #f3f4f6; color: #111827; text-decoration: none; }
+
+    .rh-card { background: #fff; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden; }
+    .rh-card-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 22px 14px; border-bottom: 1px solid #f3f4f6; flex-wrap: wrap; gap: 10px; }
+    .rh-card-title { font-size: 15px; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 8px; margin: 0; }
+    .rh-card-title i { color: #2557a7; }
+    .rh-count-pill { font-size: 12px; font-weight: 600; background: #eff6ff; color: #2557a7; padding: 3px 10px; border-radius: 999px; }
+
+    .rh-table-wrap { overflow-x: auto; }
+    .rh-table { width: 100%; border-collapse: collapse; min-width: 1080px; }
+    .rh-table thead tr { background: #f9fafb; }
+    .rh-table thead th { padding: 11px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: #6b7280; border-bottom: 1px solid #e5e7eb; white-space: nowrap; }
+    .rh-table tbody tr { border-bottom: 1px solid #f3f4f6; transition: background .15s; }
+    .rh-table tbody tr:last-child { border-bottom: none; }
+    .rh-table tbody tr:hover { background: #f9fafb; }
+    .rh-table tbody td { padding: 14px 16px; color: #374151; font-size: 13px; vertical-align: middle; }
+
+    .rh-job-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; background: #eff6ff; color: #2557a7; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+    .rh-applicant-cell { display: flex; align-items: center; gap: 10px; min-width: 150px; }
+    .rh-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg,#2557a7,#3b82f6); color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .rh-applicant-name { font-weight: 600; color: #111827; font-size: 13.5px; }
+    .rh-contact { display: flex; align-items: center; gap: 5px; color: #374151; font-size: 13px; white-space: nowrap; }
+    .rh-contact i { color: #9ca3af; font-size: 13px; }
+    .rh-cover { max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #6b7280; font-size: 12.5px; cursor: default; }
+
+    /* Resume buttons */
+    .rh-resume-btns { display: flex; flex-direction: column; gap: 6px; min-width: 110px; }
+    .rh-btn-resume { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; background: #eff6ff; color: #2557a7; border: 1px solid #bfdbfe; border-radius: 7px; font-size: 11.5px; font-weight: 600; text-decoration: none; transition: all .15s; white-space: nowrap; }
+    .rh-btn-resume:hover { background: #2557a7; color: #fff; border-color: #2557a7; text-decoration: none; }
+    .rh-btn-pdf { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; background: #faf5ff; color: #7c3aed; border: 1px solid #ddd6fe; border-radius: 7px; font-size: 11.5px; font-weight: 600; text-decoration: none; transition: all .15s; white-space: nowrap; }
+    .rh-btn-pdf:hover { background: #7c3aed; color: #fff; border-color: #7c3aed; text-decoration: none; }
+    .rh-no-resume { font-size: 12px; color: #9ca3af; font-style: italic; }
+
+    /* Status badges */
+    .rh-status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px; border-radius: 999px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+    .rh-status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+    .rh-status-applied     { background: #fefce8; color: #ca8a04; }
+    .rh-status-shortlisted { background: #f0fdf4; color: #059669; }
+    .rh-status-rejected    { background: #fef2f2; color: #dc2626; }
+    .rh-status-interview   { background: #eff6ff; color: #2557a7; }
+    .rh-status-withdrawn   { background: #f3f4f6; color: #6b7280; }
+
+    .rh-date { font-size: 12.5px; color: #6b7280; white-space: nowrap; }
+
+    /* Action buttons */
+    .rh-action-col { display: flex; flex-direction: column; gap: 6px; min-width: 110px; }
+    .rh-action-form { margin: 0; padding: 0; }
+    .rh-btn-shortlist { width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 6px 12px; background: #f0fdf4; color: #059669; border: 1px solid #bbf7d0; border-radius: 7px; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .15s; white-space: nowrap; }
+    .rh-btn-shortlist:hover { background: #059669; color: #fff; border-color: #059669; }
+    .rh-btn-reject { width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 6px 12px; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; border-radius: 7px; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .15s; white-space: nowrap; }
+    .rh-btn-reject:hover { background: #dc2626; color: #fff; border-color: #dc2626; }
+    .rh-no-action { font-size: 12px; color: #9ca3af; font-style: italic; }
+
+    .rh-empty { text-align: center; padding: 60px 20px; }
+    .rh-empty i { font-size: 46px; color: #d1d5db; display: block; margin-bottom: 14px; }
+    .rh-empty p { color: #9ca3af; font-size: 14px; margin: 0; }
+
+    @media (max-width: 991.98px) { .main-wrapper { margin-left: 0; } .main-content { padding: 20px 16px; } }
+  </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="main-wrapper">
+  <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+  <main class="main-content">
+
+    <div class="rh-page-header">
+      <div>
+        <h2><i class="bi bi-people-fill"></i> Applicants</h2>
+        <p>Review and manage all candidates who applied to your jobs.</p>
+      </div>
+      <!-- BACKEND SAFE: th:href="@{/employer/dashboard}" preserved -->
+      <a th:href="@{/employer/dashboard}" class="rh-btn-back">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+
+    <div class="rh-card">
+      <div class="rh-card-header">
+        <h3 class="rh-card-title"><i class="bi bi-person-lines-fill"></i> All Applications</h3>
+        <span class="rh-count-pill" id="appCountBadge"></span>
+      </div>
+
+      <div class="rh-table-wrap">
+        <table class="rh-table" id="appsTable">
+          <thead>
+            <tr>
+              <th>Job</th>
+              <th>Applicant</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Location</th>
+              <th>Resume</th>
+              <th>Cover Letter</th>
+              <th>Status</th>
+              <th>Applied</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- BACKEND SAFE: th:if="${#lists.isEmpty(applications)}" preserved -->
+            <tr th:if="${#lists.isEmpty(applications)}">
+              <td colspan="10">
+                <div class="rh-empty">
+                  <i class="bi bi-people"></i>
+                  <p>No applications received yet.</p>
+                </div>
+              </td>
+            </tr>
+
+            <!-- BACKEND SAFE: th:each="app : ${applications}" preserved -->
+            <tr th:each="app : ${applications}">
+
+              <!-- Job title — BACKEND SAFE: th:text="${app.jobTitle}" preserved -->
+              <td>
+                <span class="rh-job-pill">
+                  <i class="bi bi-briefcase-fill"></i>
+                  <span th:text="${app.jobTitle}"></span>
+                </span>
+              </td>
+
+              <!-- Applicant — BACKEND SAFE: th:text="${app.fullName}" preserved -->
+              <td>
+                <div class="rh-applicant-cell">
+                  <div class="rh-avatar" th:data-name="${app.fullName}"></div>
+                  <span class="rh-applicant-name" th:text="${app.fullName}"></span>
+                </div>
+              </td>
+
+              <!-- Email — BACKEND SAFE: th:text="${app.email}" preserved -->
+              <td>
+                <div class="rh-contact">
+                  <i class="bi bi-envelope"></i>
+                  <span th:text="${app.email}"></span>
+                </div>
+              </td>
+
+              <!-- Phone — BACKEND SAFE: th:text="${app.phone}" preserved -->
+              <td>
+                <div class="rh-contact">
+                  <i class="bi bi-telephone"></i>
+                  <span th:text="${app.phone}"></span>
+                </div>
+              </td>
+
+              <!-- Location — BACKEND SAFE: th:text="${app.location}" preserved -->
+              <td>
+                <div class="rh-contact">
+                  <i class="bi bi-geo-alt-fill"></i>
+                  <span th:text="${app.location}"></span>
+                </div>
+              </td>
+
+              <!-- Resume — UPDATED: all three conditions from final zip -->
+              <td>
+                <div class="rh-resume-btns">
+                  <!-- BACKEND SAFE: th:if="${app.resume != null}" + th:href preserved -->
+                  <a th:if="${app.resume != null}"
+                     th:href="@{/employer/applications/resume/{id}(id=${app.resume.id})}"
+                     class="rh-btn-resume"
+                     target="_blank">
+                    <i class="bi bi-file-person"></i> View Resume
+                  </a>
+
+                  <!-- BACKEND SAFE: th:if="${app.resumeFile != null}" + UPDATED URL -->
+                  <a th:if="${app.resumeFile != null}"
+                     th:href="@{/api/resume-files/view/{id}(id=${app.resumeFile.id})}"
+                     class="rh-btn-pdf"
+                     target="_blank">
+                    <i class="bi bi-file-earmark-pdf"></i> View PDF
+                  </a>
+
+                  <!-- BACKEND SAFE: th:if="${app.resume == null and app.resumeFile == null}" preserved -->
+                  <span th:if="${app.resume == null and app.resumeFile == null}"
+                        class="rh-no-resume">
+                    <i class="bi bi-dash-circle"></i> No Resume
+                  </span>
+                </div>
+              </td>
+
+              <!-- Cover letter — BACKEND SAFE: th:text="${app.coverLetter}" preserved -->
+              <td>
+                <div class="rh-cover" th:text="${app.coverLetter}" th:title="${app.coverLetter}"></div>
+              </td>
+
+              <!-- Status — UPDATED: WITHDRAWN badge added -->
+              <td>
+                <span class="rh-status rh-status-applied"     th:if="${app.status=='APPLIED'}">APPLIED</span>
+                <span class="rh-status rh-status-shortlisted" th:if="${app.status=='SHORTLISTED'}">SHORTLISTED</span>
+                <span class="rh-status rh-status-rejected"    th:if="${app.status=='REJECTED'}">REJECTED</span>
+                <span class="rh-status rh-status-interview"   th:if="${app.status=='INTERVIEW'}">INTERVIEW</span>
+                <!-- BACKEND SAFE: th:if="${app.status=='WITHDRAWN'}" NEW from final zip -->
+                <span class="rh-status rh-status-withdrawn"   th:if="${app.status=='WITHDRAWN'}">WITHDRAWN</span>
+              </td>
+
+              <!-- Applied date — BACKEND SAFE: th:text="${#temporals.format(app.appliedAt,'dd-MM-yyyy')}" preserved -->
+              <td>
+                <span class="rh-date" th:text="${#temporals.format(app.appliedAt,'dd-MM-yyyy')}"></span>
+              </td>
+
+              <!-- Actions — UPDATED: wrapped in APPLIED condition from final zip -->
+              <td>
+                <!-- BACKEND SAFE: th:if="${app.status.equals('APPLIED')}" NEW from final zip -->
+                <div th:if="${app.status.equals('APPLIED')}" class="rh-action-col">
+
+                  <form th:action="@{/employer/applications/{id}/status(id=${app.applicationId})}"
+                        method="post" class="rh-action-form">
+                    <input type="hidden" name="status" value="SHORTLISTED"/>
+                    <button type="submit" class="rh-btn-shortlist">
+                      <i class="bi bi-check-circle"></i> Shortlist
+                    </button>
+                  </form>
+
+                  <form th:action="@{/employer/applications/{id}/status(id=${app.applicationId})}"
+                        method="post" class="rh-action-form">
+                    <input type="hidden" name="status" value="REJECTED"/>
+                    <button type="submit" class="rh-btn-reject">
+                      <i class="bi bi-x-circle"></i> Reject
+                    </button>
+                  </form>
+
+                </div>
+
+                <!-- BACKEND SAFE: th:if="${!app.status.equals('APPLIED')}" NEW from final zip -->
+                <span th:if="${!app.status.equals('APPLIED')}" class="rh-no-action">
+                  <i class="bi bi-dash-circle"></i> No Action
+                </span>
+              </td>
+
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.querySelectorAll('.rh-avatar').forEach(function(av) {
+    var name = av.getAttribute('data-name') || '';
+    var parts = name.trim().split(' ');
+    var initials = parts.length >= 2 ? parts[0][0] + parts[parts.length-1][0] : (parts[0] ? parts[0].substring(0,2) : 'AP');
+    av.textContent = initials.toUpperCase();
+  });
+  (function() {
+    var rows = document.querySelectorAll('#appsTable tbody tr');
+    var count = 0;
+    rows.forEach(function(r) { if (!r.querySelector('.rh-empty')) count++; });
+    var badge = document.getElementById('appCountBadge');
+    if (badge && count > 0) badge.textContent = count + (count === 1 ? ' applicant' : ' applicants');
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- ================================================
+     RevHire | fragments/sidebar.html
+     UI REDESIGN — Indeed-Style Professional Sidebar
+     ================================================
+     ✅ ALL Thymeleaf attributes preserved EXACTLY:
+       • th:fragment="sidebar"
+       • th:href="@{/employer/dashboard}"
+       • th:href="@{/employer/jobs/create}"
+       • th:href="@{/employer/jobs/manage}"
+       • th:href="@{/employer/applications/all}"
+       • th:href="@{/employer/profile}"
+       • th:action="@{/logout}" method="post"
+     ================================================ -->
+
+<div th:fragment="sidebar">
+
+<!-- Bootstrap Icons — loaded here so ALL pages using this fragment get icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+<style>
+
+  :root {
+    --rh-sidebar-bg:      #0d1b2a;
+    --rh-sidebar-border:  rgba(255,255,255,0.07);
+    --rh-sidebar-width:   240px;
+    --rh-accent:          #2557a7;
+    --rh-text-muted:      #8a9bb0;
+    --rh-text-light:      #c8d6e5;
+    --rh-text-white:      #ffffff;
+    --rh-hover-bg:        rgba(255,255,255,0.06);
+    --rh-active-bg:       rgba(37,87,167,0.22);
+    --rh-active-border:   #2557a7;
+    --rh-transition:      all 0.18s ease;
+    --rh-radius:          10px;
+  }
+
+  .rh-sidebar {
+    width: var(--rh-sidebar-width);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: var(--rh-sidebar-bg);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.18);
+    overflow: hidden;
+  }
+
+  /* Brand */
+  .rh-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 22px 20px 18px;
+    border-bottom: 1px solid var(--rh-sidebar-border);
+    text-decoration: none;
+  }
+
+  .rh-brand-icon {
+    width: 38px;
+    height: 38px;
+    background: var(--rh-accent);
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(37,87,167,0.45);
+  }
+
+  .rh-brand-text { display: flex; flex-direction: column; }
+
+  .rh-brand-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--rh-text-white);
+    letter-spacing: 0.2px;
+    line-height: 1;
+  }
+
+  .rh-brand-tagline {
+    font-size: 10.5px;
+    color: var(--rh-text-muted);
+    letter-spacing: 0.4px;
+    margin-top: 3px;
+    text-transform: uppercase;
+  }
+
+  /* Section labels */
+  .rh-sidebar-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--rh-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    padding: 18px 20px 8px;
+  }
+
+  /* Nav */
+  .rh-sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 0 8px;
+    scrollbar-width: none;
+  }
+
+  .rh-sidebar-nav::-webkit-scrollbar { display: none; }
+
+  .rh-nav-item { padding: 3px 12px; }
+
+  .rh-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: var(--rh-radius);
+    color: var(--rh-text-light);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: var(--rh-transition);
+    border-left: 3px solid transparent;
+  }
+
+  .rh-nav-link:hover {
+    background: var(--rh-hover-bg);
+    color: var(--rh-text-white);
+    text-decoration: none;
+    border-left-color: rgba(37,87,167,0.5);
+  }
+
+  .rh-nav-link.active {
+    background: var(--rh-active-bg);
+    color: var(--rh-text-white);
+    border-left-color: var(--rh-active-border);
+  }
+
+  .rh-nav-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+    opacity: 0.8;
+  }
+
+  .rh-nav-link:hover .rh-nav-icon,
+  .rh-nav-link.active .rh-nav-icon { opacity: 1; }
+
+  .rh-nav-label { flex: 1; line-height: 1; }
+
+  /* Divider */
+  .rh-sidebar-divider {
+    height: 1px;
+    background: var(--rh-sidebar-border);
+    margin: 10px 16px;
+  }
+
+  /* Footer */
+  .rh-sidebar-footer {
+    padding: 14px 12px 18px;
+    border-top: 1px solid var(--rh-sidebar-border);
+  }
+
+  .rh-logout-form { margin: 0; padding: 0; }
+
+  .rh-logout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: var(--rh-radius);
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.10);
+    color: var(--rh-text-muted);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--rh-transition);
+    text-align: left;
+  }
+
+  .rh-logout-btn:hover {
+    background: rgba(220,38,38,0.12);
+    border-color: rgba(220,38,38,0.35);
+    color: #f87171;
+  }
+
+  .rh-logout-btn i { font-size: 17px; }
+
+  /* Keep main content offset in sync */
+  .main-wrapper { margin-left: var(--rh-sidebar-width) !important; }
+
+  @media (max-width: 991.98px) {
+    .rh-sidebar { transform: translateX(-100%); transition: transform 0.25s ease; }
+    .rh-sidebar.show { transform: translateX(0); }
+    .main-wrapper { margin-left: 0 !important; }
+  }
+
+</style>
+
+<aside class="rh-sidebar" id="rhSidebar">
+
+  <!-- Brand — BACKEND SAFE: th:href preserved -->
+  <a class="rh-sidebar-brand" th:href="@{/employer/dashboard}">
+    <div class="rh-brand-icon">R</div>
+    <div class="rh-brand-text">
+      <span class="rh-brand-name">RevHire</span>
+      <span class="rh-brand-tagline">Employer Portal</span>
+    </div>
+  </a>
+
+  <nav class="rh-sidebar-nav">
+
+    <div class="rh-sidebar-section-label">Main Menu</div>
+
+    <!-- BACKEND SAFE: th:href="@{/employer/dashboard}" preserved -->
+    <div class="rh-nav-item">
+      <a class="rh-nav-link" th:href="@{/employer/dashboard}">
+        <span class="rh-nav-icon"><i class="bi bi-speedometer2"></i></span>
+        <span class="rh-nav-label">Dashboard</span>
+      </a>
+    </div>
+
+    <!-- BACKEND SAFE: th:href="@{/employer/jobs/create}" preserved -->
+    <div class="rh-nav-item">
+      <a class="rh-nav-link" th:href="@{/employer/jobs/create}">
+        <span class="rh-nav-icon"><i class="bi bi-plus-circle"></i></span>
+        <span class="rh-nav-label">Post Job</span>
+      </a>
+    </div>
+
+    <!-- BACKEND SAFE: th:href="@{/employer/jobs/manage}" preserved -->
+    <div class="rh-nav-item">
+      <a class="rh-nav-link" th:href="@{/employer/jobs/manage}">
+        <span class="rh-nav-icon"><i class="bi bi-briefcase"></i></span>
+        <span class="rh-nav-label">Manage Jobs</span>
+      </a>
+    </div>
+
+    <!-- BACKEND SAFE: th:href="@{/employer/applications/all}" preserved -->
+    <div class="rh-nav-item">
+      <a class="rh-nav-link" th:href="@{/employer/applications/all}">
+        <span class="rh-nav-icon"><i class="bi bi-people"></i></span>
+        <span class="rh-nav-label">Applicants</span>
+      </a>
+    </div>
+
+    <div class="rh-sidebar-divider"></div>
+
+    <div class="rh-sidebar-section-label">Account</div>
+
+    <!-- BACKEND SAFE: th:href="@{/employer/profile}" preserved -->
+    <div class="rh-nav-item">
+      <a class="rh-nav-link" th:href="@{/employer/profile}">
+        <span class="rh-nav-icon"><i class="bi bi-building"></i></span>
+        <span class="rh-nav-label">Company Profile</span>
+      </a>
+    </div>
+
+  </nav>
+
+  <!-- Logout — BACKEND SAFE: th:action="@{/logout}" method="post" preserved -->
+  <div class="rh-sidebar-footer">
+    <form th:action="@{/logout}" method="post" class="rh-logout-form">
+      <button type="submit" class="rh-logout-btn">
+        <i class="bi bi-box-arrow-left"></i>
+        <span>Logout</span>
+      </button>
+    </form>
+  </div>
+
+</aside>
+
+<script>
+  /* Active link highlight — pure UI, zero backend interaction */
+  (function () {
+    var links = document.querySelectorAll('.rh-nav-link');
+    var path  = window.location.pathname;
+    links.forEach(function(link) {
+      var href = link.getAttribute('href');
+      if (href && path.startsWith(href) && href !== '/') {
+        link.classList.add('active');
+      }
+    });
+  })();
+</script>
+
+</div>
+
+</html>

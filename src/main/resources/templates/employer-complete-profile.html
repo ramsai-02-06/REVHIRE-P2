@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- ============================================================
+     RevHire | employer-complete-profile.html
+     Standalone page (no sidebar/navbar — first-time setup)
+     ============================================================
+     ✅ ALL Thymeleaf preserved:
+       • th:action="@{/employer/complete-profile}" method="post"
+       • th:object="${employer}"
+       • th:field="*{companyName}" *{industry} *{companySize}"
+       • th:field="*{description}" *{website}" *{location}"
+     ✅ JS: showOtherLocation() preserved
+     ============================================================ -->
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Complete Your Profile | RevHire</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- BACKEND SAFE: showOtherLocation() preserved exactly -->
+  <script>
+    function showOtherLocation(select) {
+      var otherInput = document.getElementById("otherLocationDiv");
+      if (select.value === "OTHER") {
+        otherInput.style.display = "block";
+      } else {
+        otherInput.style.display = "none";
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      background: linear-gradient(135deg, #0d1b2a 0%, #1a3354 50%, #0d1b2a 100%);
+      min-height: 100vh;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 14px;
+      color: #111827;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    .rh-wrapper {
+      width: 100%;
+      max-width: 680px;
+    }
+
+    /* Brand header */
+    .rh-brand {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .rh-brand-logo {
+      width: 52px;
+      height: 52px;
+      background: #2557a7;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 24px rgba(37,87,167,.45);
+    }
+
+    .rh-brand h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 6px;
+    }
+
+    .rh-brand p {
+      font-size: 14px;
+      color: rgba(255,255,255,.60);
+      margin: 0;
+    }
+
+    /* Steps indicator */
+    .rh-steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 28px;
+    }
+
+    .rh-step-item {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .rh-step-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .rh-step-dot.done { background: #2557a7; color: #fff; }
+    .rh-step-dot.active { background: #fff; color: #2557a7; box-shadow: 0 0 0 3px rgba(255,255,255,.3); }
+    .rh-step-dot.pending { background: rgba(255,255,255,.15); color: rgba(255,255,255,.5); }
+
+    .rh-step-label {
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 5px;
+      text-align: center;
+      color: rgba(255,255,255,.6);
+    }
+
+    .rh-step-label.active { color: #fff; }
+
+    .rh-step-connector {
+      width: 48px;
+      height: 2px;
+      background: rgba(255,255,255,.2);
+      margin: 0 4px;
+      margin-bottom: 18px;
+    }
+
+    .rh-step-connect-done { background: #2557a7; }
+
+    .rh-step-wrap { display: flex; flex-direction: column; align-items: center; }
+
+    /* Form card */
+    .rh-card {
+      background: #fff;
+      border-radius: 18px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      overflow: hidden;
+    }
+
+    .rh-card-top {
+      background: linear-gradient(120deg, #1a4480, #2557a7);
+      padding: 22px 28px 18px;
+    }
+
+    .rh-card-top h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .rh-card-top p {
+      font-size: 13px;
+      color: rgba(255,255,255,.70);
+      margin: 0;
+    }
+
+    .rh-card-body { padding: 28px; }
+
+    /* Fields */
+    .rh-field { margin-bottom: 20px; }
+    .rh-field:last-child { margin-bottom: 0; }
+    .rh-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .rh-label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    .rh-label span { color: #dc2626; margin-left: 2px; }
+    .rh-input, .rh-select, .rh-textarea { width: 100%; padding: 10px 14px; font-size: 13.5px; font-family: inherit; color: #111827; background: #fff; border: 1.5px solid #e5e7eb; border-radius: 10px; transition: border-color .18s, box-shadow .18s; outline: none; appearance: none; -webkit-appearance: none; }
+    .rh-input:focus, .rh-select:focus, .rh-textarea:focus { border-color: #2557a7; box-shadow: 0 0 0 3px rgba(37,87,167,.10); }
+    .rh-input::placeholder, .rh-textarea::placeholder { color: #9ca3af; }
+    .rh-textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+    .rh-input-group { position: relative; }
+    .rh-input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 14px; pointer-events: none; }
+    .rh-input-group .rh-input { padding-left: 34px; }
+    .rh-select-wrap { position: relative; }
+    .rh-select-wrap::after { content: '\F282'; font-family: 'bootstrap-icons'; position: absolute; right: 13px; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 14px; pointer-events: none; }
+    .rh-select { padding-right: 36px; cursor: pointer; }
+
+    /* Submit */
+    .rh-card-footer { padding: 0 28px 28px; }
+    .rh-btn-submit { width: 100%; padding: 13px; background: #2557a7; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .18s; display: flex; align-items: center; justify-content: center; gap: 9px; }
+    .rh-btn-submit:hover { background: #1a4480; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,87,167,.35); }
+    .rh-note { text-align: center; margin-top: 14px; font-size: 12px; color: #9ca3af; }
+
+    @media (max-width: 576px) { .rh-field-row { grid-template-columns: 1fr; } .rh-card-body, .rh-card-footer { padding: 20px; } }
+  </style>
+</head>
+
+<body>
+
+  <div class="rh-wrapper">
+
+    <!-- Brand -->
+    <div class="rh-brand">
+      <div class="rh-brand-logo">R</div>
+      <h1>RevHire</h1>
+      <p>Complete your employer profile to start hiring</p>
+    </div>
+
+    <!-- Steps -->
+    <div class="rh-steps">
+      <div class="rh-step-item">
+        <div class="rh-step-wrap">
+          <div class="rh-step-dot done"><i class="bi bi-check"></i></div>
+          <span class="rh-step-label">Register</span>
+        </div>
+      </div>
+      <div class="rh-step-connector rh-step-connect-done"></div>
+      <div class="rh-step-item">
+        <div class="rh-step-wrap">
+          <div class="rh-step-dot active">2</div>
+          <span class="rh-step-label active">Profile</span>
+        </div>
+      </div>
+      <div class="rh-step-connector"></div>
+      <div class="rh-step-item">
+        <div class="rh-step-wrap">
+          <div class="rh-step-dot pending">3</div>
+          <span class="rh-step-label">Post Jobs</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form card -->
+    <div class="rh-card">
+
+      <div class="rh-card-top">
+        <h2><i class="bi bi-building-fill"></i> Company Information</h2>
+        <p>Tell candidates about your company — this appears on every job you post.</p>
+      </div>
+
+      <!-- BACKEND SAFE: th:action, th:object, method preserved exactly -->
+      <form th:action="@{/employer/complete-profile}"
+            th:object="${employer}"
+            method="post">
+
+        <div class="rh-card-body">
+
+          <div class="rh-field-row">
+            <div class="rh-field">
+              <label class="rh-label">Company Name <span>*</span></label>
+              <!-- BACKEND SAFE: th:field="*{companyName}" preserved -->
+              <input type="text" class="rh-input" th:field="*{companyName}" placeholder="e.g. Acme Corp" required minlength="2">
+            </div>
+            <div class="rh-field">
+              <label class="rh-label">Industry <span>*</span></label>
+              <!-- BACKEND SAFE: th:field="*{industry}" preserved -->
+              <div class="rh-select-wrap">
+                <select class="rh-select" th:field="*{industry}" required>
+                  <option value="">Select Industry</option>
+                  <option value="IT Services">IT Services</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Healthcare">Healthcare</option>
+                  <option value="Non-IT">Non-IT</option>
+                  <option value="Manufacturing">Manufacturing</option>
+                  <option value="Retail">Retail</option>
+                  <option value="Education">Education</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="rh-field-row">
+            <div class="rh-field">
+              <label class="rh-label">Company Size <span>*</span></label>
+              <!-- BACKEND SAFE: th:field="*{companySize}" preserved -->
+              <div class="rh-select-wrap">
+                <select class="rh-select" th:field="*{companySize}" required>
+                  <option value="">Select Size</option>
+                  <option value="1-10">1–10 Employees</option>
+                  <option value="11-50">11–50 Employees</option>
+                  <option value="51-200">51–200 Employees</option>
+                  <option value="201-500">201–500 Employees</option>
+                  <option value="500+">500+ Employees</option>
+                </select>
+              </div>
+            </div>
+            <div class="rh-field">
+              <label class="rh-label">Location <span>*</span></label>
+              <!-- BACKEND SAFE: th:field="*{location}" preserved -->
+              <div class="rh-select-wrap">
+                <select class="rh-select" th:field="*{location}" required onchange="showOtherLocation(this)">
+                  <option value="">Select Location</option>
+                  <option value="Chennai">Chennai</option>
+                  <option value="Bangalore">Bangalore</option>
+                  <option value="Hyderabad">Hyderabad</option>
+                  <option value="Mumbai">Mumbai</option>
+                  <option value="Delhi">Delhi</option>
+                  <option value="Remote">Remote</option>
+                </select>
+              </div>
+              <!-- BACKEND SAFE: id="otherLocationDiv" preserved for showOtherLocation() JS -->
+              <div id="otherLocationDiv" style="display:none; margin-top:10px;">
+                <input type="text" class="rh-input" placeholder="Enter your location">
+              </div>
+            </div>
+          </div>
+
+          <div class="rh-field">
+            <label class="rh-label">Website <span>*</span></label>
+            <!-- BACKEND SAFE: th:field="*{website}" preserved -->
+            <div class="rh-input-group">
+              <i class="bi bi-globe rh-input-icon"></i>
+              <input type="url" class="rh-input" th:field="*{website}" placeholder="https://yourcompany.com" required>
+            </div>
+          </div>
+
+          <div class="rh-field">
+            <label class="rh-label">Company Description <span>*</span></label>
+            <!-- BACKEND SAFE: th:field="*{description}" preserved -->
+            <textarea class="rh-textarea" th:field="*{description}" rows="4" placeholder="Tell candidates what makes your company a great place to work..." required></textarea>
+          </div>
+
+        </div>
+
+        <div class="rh-card-footer">
+          <button type="submit" class="rh-btn-submit">
+            <i class="bi bi-arrow-right-circle-fill"></i>
+            Save Profile &amp; Continue
+          </button>
+          <p class="rh-note">You can update this information anytime from Company Profile.</p>
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
